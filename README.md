@@ -8,7 +8,7 @@
 
 This template has been upgraded to a **Turborepo monorepo** with:
 - **Backend API** (`apps/api`) - Express.js with TypeScript
-- **Frontend Web** (`apps/web`) - Next.js with TypeScript  
+- **Frontend Web** (`apps/web`) - Next.js with TypeScript
 - **Shared Package** (`packages/shared`) - Common types and utilities
 - **Turborepo** for build optimization and caching
 
@@ -21,7 +21,7 @@ nextpress/
 ├── packages/
 │   └── shared/                 # Shared types, utilities, API contracts
 ├── turbo.json                  # Turborepo configuration
-├── pnpm-workspace.yaml         # Workspace configuration  
+├── pnpm-workspace.yaml         # Workspace configuration
 ├── tsconfig.base.json          # Base TypeScript configuration
 └── package.json                # Root workspace package
 ```
@@ -66,6 +66,19 @@ nextpress/
 
 ## 📱 **Screenshots:**
 
+### **HomePage**
+<p align="center">
+  <img src=".github/home1.png" alt="NextPress Homepage Hero" width="800">
+</p>
+
+*Image 1*
+
+<p align="center">
+  <img src=".github/home2.png" alt="NextPress Homepage Features" width="800">
+</p>
+
+*Image 2*
+
 ### **Authenticated Dashboard**
 <p align="center">
   <img src=".github/dashboard.png" alt="NextPress Dashboard" width="800">
@@ -79,8 +92,8 @@ nextpress/
 
 ### **Prerequisites:**
 - Node.js 18+ and pnpm installed
-- PostgreSQL database server
 - Redis server (for sessions and job queues)
+- *No database setup required - SQLite auto-generates on first run*
 
 ### **Setup:**
 
@@ -95,12 +108,7 @@ nextpress/
    pnpm install
    ```
 
-3. **Database setup:**
-   - Create databases: `express_ts` and `express_ts_test`
-   - Copy `.env.example` to `.env` and update database credentials
-   - Copy `apps/api/.env.example` to `apps/api/.env` and configure
-
-4. **Start development:**
+3. **Start development:**
    ```bash
    # Start both API and web apps
    pnpm run dev
@@ -131,7 +139,7 @@ pnpm run test                  # Run all tests
 pnpm run test:api              # Run only API tests
 
 # Database operations (API)
-pnpm run migrate               # Run migrations  
+pnpm run migrate               # Run migrations
 pnpm run migrate:rollback      # Rollback last migration
 pnpm run migrate:make          # Create new migration
 pnpm run entity:make           # Create new entity
@@ -189,6 +197,50 @@ pnpm add @types/lodash --filter @repo/shared --save-dev
 ### **Add workspace-wide tools:**
 ```bash
 pnpm add -w prettier eslint    # Adds to root package.json
+```
+
+---
+
+## 🚀 **Deployment:**
+
+### **Quick Deploy to Vercel (Frontend Only):**
+```bash
+# Deploy the Next.js frontend
+cd apps/web
+npx vercel --prod
+
+# The API will run as Express server separately
+# For full-stack deployment, see options below
+```
+
+### **Full-Stack Deployment Options:**
+
+#### **Option 1: Separate Deployments**
+- **Frontend**: Deploy `apps/web` to Vercel/Netlify  
+- **Backend**: Deploy `apps/api` to Railway/Render/Heroku
+- **Database**: Use managed SQLite (Turso) or PostgreSQL
+
+#### **Option 2: Single Platform**
+- **Render**: Deploy both as services with shared database
+- **Railway**: Full-stack deployment with PostgreSQL
+- **Self-hosted**: Docker containers with docker-compose
+
+#### **Option 3: Serverless (Advanced)**
+- Convert Express routes to Vercel API routes
+- Use Vercel Postgres or PlanetScale  
+- Deploy as single Next.js app with API routes
+
+### **Environment Variables for Production:**
+```bash
+# Frontend (.env)
+NEXT_PUBLIC_API_URL=https://your-api-domain.com
+
+# Backend (.env)
+NODE_ENV=production
+JWT_SECRET=your-super-secure-jwt-secret
+APP_PORT=3000
+DB_CLIENT=postgres  # or sqlite for simple deployments
+DATABASE_URL=your-production-database-url
 ```
 
 ---
@@ -283,7 +335,7 @@ npm init -y
 
 ### **Adding New Packages:**
 ```bash
-mkdir packages/ui-components  
+mkdir packages/ui-components
 cd packages/ui-components
 npm init -y
 # Add to pnpm-workspace.yaml

@@ -8,7 +8,7 @@ export class CreateUsersTable1655894077446 implements MigrationInterface {
         columns: [
           {
             name: 'id',
-            type: 'int',
+            type: 'integer',
             isPrimary: true,
             isGenerated: true,
             generationStrategy: 'increment'
@@ -31,13 +31,13 @@ export class CreateUsersTable1655894077446 implements MigrationInterface {
           },
           {
             name: 'created_at',
-            type: 'timestamp',
-            default: 'now()'
+            type: 'datetime',
+            default: 'CURRENT_TIMESTAMP'
           },
           {
             name: 'updated_at',
-            type: 'timestamp',
-            default: 'now()'
+            type: 'datetime',
+            default: 'CURRENT_TIMESTAMP'
           }
         ]
       }),

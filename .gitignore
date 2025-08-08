@@ -39,6 +39,7 @@ apps/*/coverage/
 # Database
 /src/database/database.sqlite
 apps/api/src/database/database.sqlite
+apps/api/database.sqlite
 
 # OS generated files
 .DS_Store

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {
-    "postinstall": "if [ -e .env ]; then echo \".env exists\"; else echo \".env not found, copying .env.example\"; cp .env.example .env; fi && pnpm migrate",
+    "postinstall": "if [ -e .env ]; then echo \".env exists\"; else echo \".env not found, copying .env.example\"; cp .env.example .env; fi && echo \"Setting up SQLite database...\" && pnpm migrate",
     "typeorm": "typeorm-ts-node-commonjs",
     "build": "tsc && cp -R src/views dist/views",
     "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/index.ts",

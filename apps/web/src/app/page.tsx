@@ -1,50 +1,171 @@
-import { ApiClient } from '@/lib/api';
-
-export default async function Home() {
-  let users = [];
-  let error = null;
-
-  try {
-    const api = new ApiClient();
-    users = await api.get('/api/v1/users');
-  } catch (err) {
-    error = err instanceof Error ? err.message : 'Failed to fetch users';
-  }
-
+export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <h1 className="text-4xl font-bold">Express TS Starter - Web App</h1>
-        
-        <div className="bg-gray-100 p-4 rounded-lg">
-          <h2 className="text-xl font-semibold mb-2">API Connection Test</h2>
-          {error ? (
-            <p className="text-red-600">Error: {error}</p>
-          ) : (
-            <div>
-              <p className="text-green-600">✅ Successfully connected to API</p>
-              <p className="text-sm text-gray-600 mt-2">
-                Found {Array.isArray(users) ? users.length : 0} users
-              </p>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50">
+      {/* Navigation */}
+      <nav className="bg-white/80 backdrop-blur-md border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16">
+            <div className="flex items-center">
+              <h1 className="text-xl font-bold text-gray-900">NextPress</h1>
             </div>
-          )}
+            <div className="flex items-center space-x-4">
+              <a
+                href="/login"
+                className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium"
+              >
+                Sign in
+              </a>
+              <a
+                href="/register"
+                className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+              >
+                Get Started
+              </a>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
+        <div className="text-center">
+          <h1 className="text-5xl font-extrabold text-gray-900 sm:text-6xl">
+            <span className="block">Express + Next.js</span>
+            <span className="block text-indigo-600">Monorepo Starter</span>
+          </h1>
+          <p className="mt-6 max-w-2xl mx-auto text-xl text-gray-500">
+            A production-ready fullstack template with TypeScript, authentication, 
+            type-safe APIs, and modern development tools.
+          </p>
+          <div className="mt-8 flex justify-center space-x-4">
+            <a
+              href="/register"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-md text-lg font-medium"
+            >
+              Start Building
+            </a>
+            <a
+              href="/login"
+              className="border border-gray-300 hover:border-gray-400 text-gray-700 px-8 py-3 rounded-md text-lg font-medium"
+            >
+              Sign In
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* Features Section */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="text-center">
+          <h2 className="text-3xl font-extrabold text-gray-900">
+            Everything you need to build modern web apps
+          </h2>
+          <p className="mt-4 text-lg text-gray-600">
+            Built with the latest technologies and best practices
+          </p>
         </div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="/login"
-          >
-            Login
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="/register"
-          >
-            Register
-          </a>
+        <div className="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {/* Feature 1 */}
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="h-12 w-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
+              <span className="text-indigo-600 text-xl">🚀</span>
+            </div>
+            <h3 className="text-lg font-medium text-gray-900">Turborepo Monorepo</h3>
+            <p className="mt-2 text-gray-600">
+              Fast, cached builds with Express API, Next.js frontend, and shared packages.
+            </p>
+          </div>
+
+          {/* Feature 2 */}
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+              <span className="text-green-600 text-xl">🔒</span>
+            </div>
+            <h3 className="text-lg font-medium text-gray-900">JWT Authentication</h3>
+            <p className="mt-2 text-gray-600">
+              Secure authentication with JWT tokens, Passport.js, and httpOnly cookies.
+            </p>
+          </div>
+
+          {/* Feature 3 */}
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+              <span className="text-blue-600 text-xl">⚡</span>
+            </div>
+            <h3 className="text-lg font-medium text-gray-900">Type Safety</h3>
+            <p className="mt-2 text-gray-600">
+              End-to-end TypeScript with shared types between frontend and backend.
+            </p>
+          </div>
+
+          {/* Feature 4 */}
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
+              <span className="text-purple-600 text-xl">🗄️</span>
+            </div>
+            <h3 className="text-lg font-medium text-gray-900">Database Ready</h3>
+            <p className="mt-2 text-gray-600">
+              TypeORM with PostgreSQL, migrations, and Redis for sessions and queues.
+            </p>
+          </div>
+
+          {/* Feature 5 */}
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="h-12 w-12 bg-yellow-100 rounded-lg flex items-center justify-center mb-4">
+              <span className="text-yellow-600 text-xl">🧪</span>
+            </div>
+            <h3 className="text-lg font-medium text-gray-900">Testing & DevOps</h3>
+            <p className="mt-2 text-gray-600">
+              Jest testing, background jobs with BullMQ, and development tools included.
+            </p>
+          </div>
+
+          {/* Feature 6 */}
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="h-12 w-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
+              <span className="text-red-600 text-xl">🎨</span>
+            </div>
+            <h3 className="text-lg font-medium text-gray-900">Modern UI</h3>
+            <p className="mt-2 text-gray-600">
+              Next.js 14 with Tailwind CSS, responsive design, and beautiful components.
+            </p>
+          </div>
         </div>
-      </main>
+      </div>
+
+      {/* CTA Section */}
+      <div className="bg-indigo-600">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="text-center">
+            <h2 className="text-3xl font-extrabold text-white">
+              Ready to start your next project?
+            </h2>
+            <p className="mt-4 text-xl text-indigo-200">
+              Join thousands of developers using NextPress to build amazing applications.
+            </p>
+            <div className="mt-8">
+              <a
+                href="/register"
+                className="bg-white text-indigo-600 px-8 py-3 rounded-md text-lg font-medium hover:bg-gray-50"
+              >
+                Create Account
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="bg-gray-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="text-center">
+            <p className="text-gray-400">
+              © 2025 NextPress. A modern fullstack starter template.
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

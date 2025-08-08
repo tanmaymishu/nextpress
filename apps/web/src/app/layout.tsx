@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Express TS Starter - Web App",
+  title: "NextPress - Web App",
   description: "Frontend for Express TypeScript Starter",
 };
 
