@@ -205,12 +205,14 @@ pnpm add -w prettier eslint    # Adds to root package.json
 
 ### **Quick Deploy to Vercel (Frontend Only):**
 ```bash
-# Deploy the Next.js frontend
-cd apps/web
+# Deploy the Next.js frontend from monorepo root
 npx vercel --prod
 
+# Uses vercel.json configuration to properly build workspace dependencies
 # The API will run as Express server separately
-# For full-stack deployment, see options below
+
+# Note: Deploy from monorepo root, not from apps/web directory
+# This ensures proper resolution of @repo/shared workspace dependencies
 ```
 
 ### **Full-Stack Deployment Options:**

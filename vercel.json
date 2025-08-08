@@ -1,15 +1,15 @@
 {
-  "buildCommand": "pnpm run build",
+  "buildCommand": "pnpm run build:web",
   "outputDirectory": "apps/web/.next",
-  "installCommand": "pnpm install",
+  "installCommand": "pnpm install --frozen-lockfile",
   "framework": "nextjs",
   "env": {
-    "NEXT_PUBLIC_API_URL": "https://your-nextpress-api.vercel.app"
+    "NEXT_PUBLIC_API_URL": "https://nextpress-git-develop-tanmaymishus-projects.vercel.app"
   },
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "https://your-nextpress-api.vercel.app/api/$1"
+      "destination": "https://nextpress-git-develop-tanmaymishus-projects.vercel.app/api/$1"
     }
   ]
 }
