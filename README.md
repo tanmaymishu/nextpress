@@ -250,23 +250,20 @@ DATABASE_URL=your-production-database-url
 
 ### **Troubleshooting Vercel Deployment:**
 
-If you encounter pnpm lockfile version issues:
+#### **Common Issues:**
 
-1. **Temporary fix** - Update vercel.json:
+1. **pnpm lockfile version mismatch:**
    ```json
+   // Temporary fix in vercel.json
    "installCommand": "pnpm install --no-frozen-lockfile"
    ```
 
-2. **Permanent fix** - Regenerate lockfile with matching pnpm version:
-   ```bash
-   rm pnpm-lock.yaml
-   pnpm install
-   ```
+2. **Database migration errors during build:**
+   - ✅ **Automatically handled** - Migrations are skipped on Vercel
+   - The API postinstall script detects Vercel environment and skips database setup
 
-3. **Alternative** - Use npm instead:
-   ```json
-   "installCommand": "npm ci"
-   ```
+3. **Missing SQLite dependencies:**
+   - ✅ **Already included** - `sqlite3` is now a production dependency
 
 ---
 
