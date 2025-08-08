@@ -1,6 +1,6 @@
 {
-  "buildCommand": "cd apps/web && pnpm install --no-frozen-lockfile && pnpm run build",
-  "installCommand": "pnpm install --no-frozen-lockfile",
+  "buildCommand": "cd ../.. && pnpm install && pnpm run build:web",
+  "installCommand": "cd ../.. && pnpm install",
   "env": {
     "NEXT_PUBLIC_API_URL": "https://nextpress-git-develop-tanmaymishus-projects.vercel.app"
   },
