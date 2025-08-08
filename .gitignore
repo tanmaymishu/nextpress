@@ -1,0 +1,77 @@
+# Environment files
+.env
+.env.local
+.env.production
+.env.test
+
+# Dependencies
+node_modules/
+/node_modules
+apps/*/node_modules/
+packages/*/node_modules/
+
+# Build outputs
+dist/
+build/
+apps/*/dist/
+apps/*/build/
+apps/web/.next/
+apps/web/out/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+apps/*/coverage/
+
+# Database
+/src/database/database.sqlite
+apps/api/src/database/database.sqlite
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# TypeScript cache
+*.tsbuildinfo
+apps/*/*.tsbuildinfo
+packages/*/*.tsbuildinfo
+
+# Next.js
+apps/web/.next/
+apps/web/out/
+apps/web/*.tsbuildinfo
+
+# Documentation
+CLAUDE.md
+
+# Lock files that should NOT be committed in monorepos
+package-lock.json
+yarn.lock
+
+# Deployment data (removed from this repo)
+/data/
+.turbo/

@@ -1,0 +1,30 @@
+{
+  "name": "nextpress",
+  "private": true,
+  "version": "1.0.0",
+  "author": "Tanmay Mishu <tanmaymishu@gmail.com>",
+  "license": "MIT",
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "test": "turbo run test",
+    "lint": "turbo run lint", 
+    "typecheck": "turbo run typecheck",
+    "clean": "turbo run clean",
+    "dev:api": "turbo run dev --filter=@repo/api",
+    "dev:web": "turbo run dev --filter=@repo/web",
+    "build:api": "turbo run build --filter=@repo/api",
+    "build:web": "turbo run build --filter=@repo/web",
+    "test:api": "turbo run test --filter=@repo/api",
+    "migrate": "turbo run migrate --filter=@repo/api",
+    "migrate:rollback": "turbo run migrate:rollback --filter=@repo/api",
+    "migrate:make": "cd apps/api && pnpm migrate:make",
+    "entity:make": "cd apps/api && pnpm entity:make",
+    "fmt": "turbo run fmt --filter=@repo/api"
+  },
+  "devDependencies": {
+    "turbo": "^1.10.16"
+  },
+  "packageManager": "pnpm@8.15.0"
+}

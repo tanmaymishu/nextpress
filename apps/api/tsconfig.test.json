@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["./*"],
+      "@repo/shared": ["../../packages/shared/src"]
+    },
+    "rootDirs": ["./src", "./tests"],
+    "typeRoots": ["./src/types", "../../node_modules/@types"],
+    "types": ["jest", "node"]
+  },
+  "include": ["src/**/*", "tests/**/*"],
+  "exclude": ["node_modules", "dist"]
+}

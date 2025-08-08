@@ -1,0 +1,54 @@
+<svg width="800" height="200" viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="text-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f0f9ff;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="200" fill="url(#bg-gradient)" rx="15"/>
+  
+  <!-- Decorative circles -->
+  <circle cx="100" cy="50" r="30" fill="#ffffff" opacity="0.1"/>
+  <circle cx="700" cy="150" r="40" fill="#ffffff" opacity="0.08"/>
+  <circle cx="650" cy="40" r="20" fill="#ffffff" opacity="0.12"/>
+  
+  <!-- Express.js icon representation -->
+  <rect x="80" y="80" width="60" height="8" rx="4" fill="#ffffff" opacity="0.9"/>
+  <rect x="80" y="95" width="45" height="6" rx="3" fill="#ffffff" opacity="0.7"/>
+  <rect x="80" y="107" width="35" height="6" rx="3" fill="#ffffff" opacity="0.7"/>
+  
+  <!-- Next.js arrow representation -->
+  <polygon points="680,75 700,85 700,80 720,80 720,90 700,90 700,85 680,95" fill="#ffffff" opacity="0.9"/>
+  
+  <!-- Main title -->
+  <text x="400" y="85" font-family="'Segoe UI', system-ui, sans-serif" font-size="48" font-weight="700" text-anchor="middle" fill="url(#text-gradient)">
+    NextPress
+  </text>
+  
+  <!-- Subtitle -->
+  <text x="400" y="115" font-family="'Segoe UI', system-ui, sans-serif" font-size="18" font-weight="400" text-anchor="middle" fill="#ffffff" opacity="0.9">
+    Express + Next.js Monorepo Starter
+  </text>
+  
+  <!-- Tech badges -->
+  <rect x="250" y="135" width="80" height="24" rx="12" fill="#000000" opacity="0.2"/>
+  <text x="290" y="150" font-family="'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="500" text-anchor="middle" fill="#ffffff">
+    TypeScript
+  </text>
+  
+  <rect x="340" y="135" width="70" height="24" rx="12" fill="#000000" opacity="0.2"/>
+  <text x="375" y="150" font-family="'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="500" text-anchor="middle" fill="#ffffff">
+    Turborepo
+  </text>
+  
+  <rect x="420" y="135" width="60" height="24" rx="12" fill="#000000" opacity="0.2"/>
+  <text x="450" y="150" font-family="'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="500" text-anchor="middle" fill="#ffffff">
+    pnpm
+  </text>
+</svg>
