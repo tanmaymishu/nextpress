@@ -263,6 +263,9 @@ DATABASE_URL=your-production-database-url
 3. **Missing SQLite dependencies:**
    - ✅ **Already included** - `sqlite3` is now a production dependency
 
+4. **Missing workspace script errors:**
+   - ✅ **Already configured** - Using `pnpm -w run build:web` for workspace context
+
 ---
 
 ## 🏗️ **Architecture Decisions:**
