@@ -34,9 +34,10 @@ export default class AuthService {
   }
 
   async login(req: Request) {
-    // TODO: Add input validation for email/password
-    // TODO: Implement rate limiting to prevent brute force attacks
-    const user = await User.findOneBy({ email: req.body.email });
+    const user = await User.createQueryBuilder('user')
+      .where('user.email = :email', { email: req.body.email })
+      .addSelect('user.password')
+      .getOne();
 
     if (!user || !bcrypt.compareSync(req.body.password, user.password)) {
       // SECURITY: Generic error message to prevent user enumeration

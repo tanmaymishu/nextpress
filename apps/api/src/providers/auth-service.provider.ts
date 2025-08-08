@@ -38,10 +38,13 @@ export default class AuthServiceProvider extends ServiceProvider {
       audience: 'app.example.com'
     };
     const jwtStrategy = new JwtStrategy(opts, async function (payload: any, done: any) {
-      if (Date.now() > payload.exp) {
+      // Check if token is expired (payload.exp is in seconds, Date.now() is in milliseconds)
+      if (payload.exp && Date.now() > payload.exp * 1000) {
         return done(null, false);
       }
+      
       const user = await User.findOneBy({ id: payload.sub });
+      
       if (user) {
         return done(null, user);
       }

@@ -1,4 +1,4 @@
-import type { ApiUser, LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, ApiResponse } from '@repo/shared';
+import type { ApiUser, LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, MeResponse } from '@repo/shared';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
@@ -17,6 +17,7 @@ export class ApiClient {
         'Content-Type': 'application/json',
         ...options.headers,
       },
+      credentials: 'include', // Include cookies for authentication
       ...options,
     };
 
@@ -62,5 +63,9 @@ export class ApiClient {
 
   async register(userData: RegisterRequest): Promise<RegisterResponse> {
     return this.post<RegisterResponse>('/api/v1/register', userData);
+  }
+
+  async me(): Promise<MeResponse> {
+    return this.get<MeResponse>('/api/v1/me');
   }
 }

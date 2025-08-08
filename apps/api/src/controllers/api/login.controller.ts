@@ -25,6 +25,7 @@ export class LoginController {
         return res.json({ user });
       })
       .catch((err) => {
+        console.log(err);
         return res.status(422).json({ message: 'Invalid username or password' });
       });
   }

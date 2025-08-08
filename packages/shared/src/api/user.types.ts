@@ -1,5 +1,7 @@
 export interface ApiUser {
   id: string;
+  firstName: string;
+  lastName: string;
   email: string;
   createdAt: string;
   updatedAt: string;
@@ -16,12 +18,15 @@ export interface LoginResponse {
 }
 
 export interface RegisterRequest {
-  name?: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
 }
 
 export interface RegisterResponse {
   user: ApiUser;
-  message: string;
+  message?: string;
 }
+
+export interface MeResponse extends ApiUser {}

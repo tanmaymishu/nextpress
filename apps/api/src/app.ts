@@ -75,7 +75,10 @@ app.use(
   // Add custom helpers to request object
   (req, res, next) => {
     req.wantsJson = () => {
-      return req.accepts()[0].includes('/json') || req.accepts()[0].includes('+json');
+      // Check if it's an API request or if Accept header includes JSON
+      return req.path.startsWith('/api/') ||
+             req.get('Content-Type')?.includes('application/json') ||
+             req.accepts('json') === 'json';
     };
     next();
   },
@@ -101,8 +104,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // Parse the form-data request body.
 app.use(multer().any());
-// Enable CORS
-app.use(cors());
+// Enable CORS with credentials support
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production'
+    ? ['https://your-production-domain.com']
+    : ['http://localhost:3001'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 // Log the incoming requests to console.
 app.use(morganLogger);
 
@@ -122,7 +132,7 @@ app.use('/api/', limiter);
 // Authentication rate limiting
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // limit each IP to 5 requests per windowMs for auth endpoints
+  max: 100, // limit each IP to 5 requests per windowMs for auth endpoints
   message: 'Too many authentication attempts, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,

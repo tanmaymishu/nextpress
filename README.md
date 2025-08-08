@@ -64,6 +64,17 @@ nextpress/
 
 ---
 
+## 📱 **Screenshots:**
+
+### **Authenticated Dashboard**
+<p align="center">
+  <img src=".github/dashboard.png" alt="NextPress Dashboard" width="800">
+</p>
+
+*Full-stack authentication working with JWT cookies, displaying user profile data from the `/api/v1/me` endpoint*
+
+---
+
 ## 🏁 **Getting Started:**
 
 ### **Prerequisites:**
