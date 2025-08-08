@@ -31,7 +31,7 @@ export default function LoginPage() {
     try {
       const api = new ApiClient();
       const response = await api.login(formData);
-      
+
       // Redirect to dashboard on successful login
       router.push('/dashboard');
     } catch (err) {
@@ -62,7 +62,7 @@ export default function LoginPage() {
               {error}
             </div>
           )}
-          
+
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
               <label htmlFor="email" className="sr-only">
@@ -110,7 +110,7 @@ export default function LoginPage() {
 
           <div className="text-center">
             <p className="text-sm text-gray-600">
-              Don't have an account?{' '}
+              Don&#39;t have an account?{' '}
               <a href="/register" className="font-medium text-indigo-600 hover:text-indigo-500">
                 Sign up
               </a>
