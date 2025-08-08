@@ -252,11 +252,9 @@ DATABASE_URL=your-production-database-url
 
 #### **Common Issues:**
 
-1. **pnpm lockfile version mismatch:**
-   ```json
-   // Temporary fix in vercel.json
-   "installCommand": "pnpm install --no-frozen-lockfile"
-   ```
+1. **pnpm lockfile outdated:**
+   - ✅ **Already configured** - Using `--no-frozen-lockfile` in `vercel.json`
+   - This allows Vercel to resolve dependency updates automatically
 
 2. **Database migration errors during build:**
    - ✅ **Automatically handled** - Migrations are skipped on Vercel

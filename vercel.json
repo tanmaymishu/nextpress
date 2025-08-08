@@ -1,7 +1,7 @@
 {
   "buildCommand": "pnpm run build:web",
   "outputDirectory": "apps/web/.next",
-  "installCommand": "pnpm install --frozen-lockfile",
+  "installCommand": "pnpm install --no-frozen-lockfile",
   "framework": "nextjs",
   "env": {
     "NEXT_PUBLIC_API_URL": "https://nextpress-git-develop-tanmaymishus-projects.vercel.app"
