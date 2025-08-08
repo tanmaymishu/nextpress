@@ -35,7 +35,7 @@ export default function DashboardPage() {
     try {
       // Clear cookies by making a request to a logout endpoint (if it exists)
       // For now, just redirect to login
-      router.push('/login?message=You have been logged out');
+      router.push('/login');
     } catch (err) {
       console.error('Logout error:', err);
       // Still redirect even if logout fails

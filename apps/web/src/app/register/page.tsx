@@ -15,6 +15,7 @@ export default function RegisterPage() {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,8 +26,13 @@ export default function RegisterPage() {
       const api = new ApiClient();
       const response = await api.register(formData);
       
-      // Redirect to login page on successful registration
-      router.push('/login?message=Registration successful! Please sign in.');
+      // Show success state
+      setSuccess(true);
+      
+      // Redirect to login after 2 seconds
+      setTimeout(() => {
+        router.push('/login');
+      }, 2000);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed');
     } finally {
@@ -49,12 +55,26 @@ export default function RegisterPage() {
             Create your account
           </h2>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-              {error}
+        {success ? (
+          <div className="text-center">
+            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+              <div className="flex items-center justify-center mb-2">
+                <svg className="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                Registration Successful!
+              </div>
+              <p>Your account has been created. Redirecting to login page...</p>
             </div>
-          )}
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-indigo-600 mx-auto"></div>
+          </div>
+        ) : (
+          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+            {error && (
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                {error}
+              </div>
+            )}
           
           <div className="rounded-md shadow-sm space-y-4">
             <div className="flex space-x-2">
@@ -144,6 +164,7 @@ export default function RegisterPage() {
             </p>
           </div>
         </form>
+        )}
       </div>
     </div>
   );
