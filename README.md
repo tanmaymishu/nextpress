@@ -213,6 +213,9 @@ npx vercel --prod
 
 # Note: Deploy from monorepo root, not from apps/web directory
 # This ensures proper resolution of @repo/shared workspace dependencies
+
+# If you encounter pnpm lockfile issues, temporarily use:
+# "installCommand": "pnpm install --no-frozen-lockfile" in vercel.json
 ```
 
 ### **Full-Stack Deployment Options:**
@@ -244,6 +247,26 @@ APP_PORT=3000
 DB_CLIENT=postgres  # or sqlite for simple deployments
 DATABASE_URL=your-production-database-url
 ```
+
+### **Troubleshooting Vercel Deployment:**
+
+If you encounter pnpm lockfile version issues:
+
+1. **Temporary fix** - Update vercel.json:
+   ```json
+   "installCommand": "pnpm install --no-frozen-lockfile"
+   ```
+
+2. **Permanent fix** - Regenerate lockfile with matching pnpm version:
+   ```bash
+   rm pnpm-lock.yaml
+   pnpm install
+   ```
+
+3. **Alternative** - Use npm instead:
+   ```json
+   "installCommand": "npm ci"
+   ```
 
 ---
 
