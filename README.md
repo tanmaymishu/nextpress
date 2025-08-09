@@ -4,13 +4,16 @@
   <p align="center">Express + Next.js Monorepo Starter Template</p>
 </p>
 
-## 🚀 **Monorepo Architecture**
+## 🚀 **Production-Ready Fullstack Template**
 
-This template has been upgraded to a **Turborepo monorepo** with:
-- **Backend API** (`apps/api`) - Express.js with TypeScript
-- **Frontend Web** (`apps/web`) - Next.js with TypeScript
+A modern fullstack TypeScript template featuring **Next.js 15**, **Tailwind CSS v4**, **Shadcn UI**, complete authentication, and advanced developer tooling.
+
+This template includes a **Turborepo monorepo** with:
+- **Backend API** (`apps/api`) - Express.js with TypeScript + JWT Auth
+- **Frontend Web** (`apps/web`) - Next.js 15 + Shadcn UI + TanStack Query
 - **Shared Package** (`packages/shared`) - Common types and utilities
-- **Turborepo** for build optimization and caching
+- **Turborepo** for build optimization and advanced caching
+- **Complete Auth System** - Login, register, dashboard, protected routes
 
 ### 📁 **Project Structure:**
 ```
@@ -31,21 +34,28 @@ nextpress/
 ## 🔑 **Key Features:**
 
 ### **Backend API (`apps/api`):**
-- Good ol' [Express](https://expressjs.com/) with full TypeScript support
-- ORM with migrations ([TypeORM](https://typeorm.io/))
-- Session-based and Token-based Authentication ([Passport](http://www.passportjs.org/))
-- Templating ([EJS](https://ejs.co/)) for server-rendered pages
+- [Express.js](https://expressjs.com/) with full TypeScript support
+- [TypeORM](https://typeorm.io/) with SQLite (auto-generates) for zero-config development
+- JWT Authentication with [Passport.js](http://www.passportjs.org/) strategies
+- Bearer token + httpOnly cookie dual auth support for REST clients
+- [EJS](https://ejs.co/) templating for server-rendered pages
 - Logging ([Winston](https://github.com/winstonjs/winston) + [Morgan](https://github.com/expressjs/morgan))
 - Request validation ([Express Validator](https://express-validator.github.io/))
 - Background job processing ([BullMQ](https://docs.bullmq.io/))
 - Queue monitoring dashboard ([Bull Board](https://github.com/felixmosh/bull-board))
 - Security headers ([Helmet](https://helmetjs.github.io/))
+- CORS configuration for cross-origin authenticated requests
 - Rate limiting for API endpoints
 
 ### **Frontend Web (`apps/web`):**
-- [Next.js 14](https://nextjs.org/) with App Router
+- [Next.js 15](https://nextjs.org/) with App Router
 - [TypeScript](https://www.typescriptlang.org/) for type safety
-- [Tailwind CSS](https://tailwindcss.com/) for styling
+- [Tailwind CSS v4](https://tailwindcss.com/) with CSS-first configuration
+- [Shadcn UI](https://ui.shadcn.com/) components with Radix UI primitives
+- [TanStack Query](https://tanstack.com/query) for server state management
+- [React Hook Form](https://react-hook-form.com/) with Zod validation
+- JWT + Cookie authentication with protected routes
+- Auth-aware navigation and redirects
 - Type-safe API client with shared types
 - Server-side rendering and static generation
 
@@ -55,12 +65,22 @@ nextpress/
 - Shared utilities and helper functions
 - End-to-end type safety between frontend and backend
 
+### **Authentication & UI Features:**
+- **Complete auth flow**: Login, register, dashboard with protected routes
+- **Guest route protection**: Auto-redirect logged-in users from auth pages
+- **Auth context**: Centralized authentication state management
+- **Modern forms**: React Hook Form with Zod validation and error handling
+- **Card-based UI**: Clean, modern design with Shadcn UI components
+- **Auth-aware navigation**: Dynamic navbar based on authentication status
+- **Responsive design**: Mobile-first with Tailwind CSS utilities
+
 ### **Development Experience:**
-- **Turborepo** for fast, cached builds
+- **Turborepo** for fast, cached builds with advanced caching
 - **Hot reload** across all applications
 - **pnpm workspaces** for efficient dependency management
 - **Unified testing** with Jest
 - **Type safety** across the entire stack
+- **CSS-first theming** with design tokens and CSS variables
 
 ---
 
@@ -76,7 +96,7 @@ nextpress/
   <img src=".github/dashboard.png" alt="NextPress Dashboard" width="800">
 </p>
 
-*Full-stack authentication working with JWT cookies, displaying user profile data from the `/api/v1/me` endpoint*
+*Full-stack authentication with JWT cookies, user profile data from `/api/v1/me` endpoint, modern Shadcn UI components*
 
 ---
 
@@ -260,7 +280,21 @@ DATABASE_URL=your-production-database-url
 
 ---
 
-## 🏗️ **Architecture Decisions:**
+## 🏗️ **Architecture & Tech Stack:**
+
+### **Modern Stack:**
+- **Frontend**: Next.js 15 + React 18 + TypeScript
+- **Styling**: Tailwind CSS v4 with CSS-first configuration
+- **UI Components**: Shadcn UI + Radix UI primitives
+- **Forms**: React Hook Form + Zod validation
+- **State Management**: TanStack Query for server state
+- **Authentication**: JWT + httpOnly cookies with dual support
+- **Backend**: Express.js + TypeScript + TypeORM
+- **Database**: SQLite (auto-setup) / PostgreSQL (production)
+- **Build System**: Turborepo with advanced caching
+- **Package Manager**: pnpm workspaces
+
+### **Architecture Decisions:**
 
 ### **API-First Design:**
 - The **API app** handles all backend logic, database operations, and authentication
@@ -279,15 +313,22 @@ DATABASE_URL=your-production-database-url
 
 ---
 
-## 🛡️ **Security Features:**
+## 🛡️ **Security & Authentication Features:**
 
+### **Authentication System:**
+- **Dual auth support**: Bearer tokens for REST clients + httpOnly cookies for web
+- **Protected routes**: Automatic redirects for authenticated/guest-only pages
+- **Secure JWT**: HttpOnly cookies with SameSite protection
+- **Auth context**: Centralized state management with React Context
+- **Auto logout**: Handles token expiration gracefully
+
+### **API Security:**
 - **Helmet.js** for security headers
 - **Rate limiting** on API endpoints (100 req/15min general, 5 req/15min auth)
-- **CORS** configuration
-- **Session security** with secure cookies
-- **JWT token** authentication
-- **Input validation** with express-validator
+- **CORS** configuration with credential support
+- **Input validation** with express-validator and Zod
 - **Error handling** with configurable debug mode
+- **Request logging** for security monitoring
 
 ---
 
@@ -325,14 +366,19 @@ DATABASE_URL=your-production-database-url
 
 ---
 
-## 📝 **Notes:**
+## 📝 **Key Highlights:**
 
-- **Deployment configurations removed** - This template focuses on development
-- **Type safety enforced** across the entire stack
-- **Hot reload** works across all applications
-- **Turborepo caching** speeds up builds and tests
-- **pnpm workspaces** ensure efficient dependency management
-- **Modular architecture** - easy to add more apps (mobile, admin, etc.)
+- **Modern Frontend**: Next.js 15 with App Router and React 18
+- **Advanced Styling**: Tailwind CSS v4 with CSS-first configuration
+- **Component System**: Shadcn UI with Radix UI primitives
+- **Complete Authentication**: Full auth flow with protected routes and context
+- **Server State**: TanStack Query for efficient data management
+- **Form Handling**: React Hook Form with Zod validation
+- **Zero Config**: SQLite auto-setup for instant development
+- **Flexible Auth**: Supports both web cookies and REST API tokens
+- **Type Safety**: End-to-end TypeScript across the entire stack
+- **Fast Builds**: Turborepo with advanced caching and hot reload
+- **Production Ready**: Deployment configurations for major platforms
 
 ---
 
