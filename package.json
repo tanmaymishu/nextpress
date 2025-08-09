@@ -24,7 +24,7 @@
     "fmt": "turbo run fmt --filter=@repo/api"
   },
   "devDependencies": {
-    "turbo": "^1.10.16"
+    "turbo": "^2.5.5"
   },
   "packageManager": "pnpm@10.9.0"
 }
