@@ -3,12 +3,12 @@
   "installCommand": "cd ../.. && pnpm install",
   "outputDirectory": ".next",
   "env": {
-    "NEXT_PUBLIC_API_URL": "https://nextpress-git-develop-tanmaymishus-projects.vercel.app"
+    "NEXT_PUBLIC_API_URL": "https://nextpress.onrender.com"
   },
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "https://nextpress-git-develop-tanmaymishus-projects.vercel.app/api/$1"
+      "destination": "https://nextpress.onrender.com/api/$1"
     }
   ]
 }
