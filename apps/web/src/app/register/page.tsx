@@ -3,13 +3,18 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import Link from 'next/link';
 import { useRegister } from '@/hooks/api/useAuth';
 import { registerSchema, RegisterFormData } from '@/lib/validationSchemas';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function RegisterPage() {
   const [success, setSuccess] = useState(false);
   const registerMutation = useRegister();
-  
+
   const {
     register,
     handleSubmit,
@@ -34,140 +39,118 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create your account
-          </h2>
-        </div>
+    <div className="min-h-screen flex items-center justify-center bg-muted/50 p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl text-center">Create account</CardTitle>
+          <CardDescription className="text-center">
+            Enter your details to create your account
+          </CardDescription>
+        </CardHeader>
+
         {success ? (
-          <div className="text-center">
-            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+          <CardContent className="text-center space-y-4">
+            <div className="bg-green-50 text-green-700 text-sm p-3 rounded-md border border-green-200">
               <div className="flex items-center justify-center mb-2">
-                <svg className="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
                 Registration Successful!
               </div>
               <p>Your account has been created. Redirecting to login page...</p>
             </div>
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-indigo-600 mx-auto"></div>
-          </div>
+            <div className="flex justify-center">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+            </div>
+          </CardContent>
         ) : (
-          <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
-            {registerMutation.error && (
-              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                {registerMutation.error.message}
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <CardContent className="space-y-4">
+              {registerMutation.error && (
+                <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md border border-destructive/20">
+                  {registerMutation.error.message}
+                </div>
+              )}
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="firstName">First Name</Label>
+                  <Input
+                    {...register('firstName')}
+                    id="firstName"
+                    type="text"
+                    placeholder="Enter your first name"
+                    className={errors.firstName ? "border-destructive focus-visible:ring-destructive" : ""}
+                  />
+                  {errors.firstName && (
+                    <p className="text-sm text-destructive">{errors.firstName.message}</p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lastName">Last Name</Label>
+                  <Input
+                    {...register('lastName')}
+                    id="lastName"
+                    type="text"
+                    placeholder="Enter your last name"
+                    className={errors.lastName ? "border-destructive focus-visible:ring-destructive" : ""}
+                  />
+                  {errors.lastName && (
+                    <p className="text-sm text-destructive">{errors.lastName.message}</p>
+                  )}
+                </div>
               </div>
-            )}
-          
-          <div className="rounded-md shadow-sm space-y-4">
-            <div className="flex space-x-2">
-              <div className="flex-1">
-                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
-                  First Name
-                </label>
-                <input
-                  {...register('firstName')}
-                  id="firstName"
-                  type="text"
-                  className={`mt-1 appearance-none relative block w-full px-3 py-2 border placeholder-gray-500 text-gray-900 rounded-md focus:outline-none sm:text-sm ${
-                    errors.firstName 
-                      ? 'border-red-300 focus:ring-red-500 focus:border-red-500' 
-                      : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'
-                  }`}
-                  placeholder="First Name"
+
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  {...register('email')}
+                  id="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  autoComplete="email"
+                  className={errors.email ? "border-destructive focus-visible:ring-destructive" : ""}
                 />
-                {errors.firstName && (
-                  <p className="mt-1 text-sm text-red-600">{errors.firstName.message}</p>
+                {errors.email && (
+                  <p className="text-sm text-destructive">{errors.email.message}</p>
                 )}
               </div>
-              <div className="flex-1">
-                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
-                  Last Name
-                </label>
-                <input
-                  {...register('lastName')}
-                  id="lastName"
-                  type="text"
-                  className={`mt-1 appearance-none relative block w-full px-3 py-2 border placeholder-gray-500 text-gray-900 rounded-md focus:outline-none sm:text-sm ${
-                    errors.lastName 
-                      ? 'border-red-300 focus:ring-red-500 focus:border-red-500' 
-                      : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'
-                  }`}
-                  placeholder="Last Name"
+
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  {...register('password')}
+                  id="password"
+                  type="password"
+                  placeholder="Enter your password"
+                  autoComplete="new-password"
+                  className={errors.password ? "border-destructive focus-visible:ring-destructive" : ""}
                 />
-                {errors.lastName && (
-                  <p className="mt-1 text-sm text-red-600">{errors.lastName.message}</p>
+                {errors.password && (
+                  <p className="text-sm text-destructive">{errors.password.message}</p>
                 )}
               </div>
-            </div>
-            
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email Address
-              </label>
-              <input
-                {...register('email')}
-                id="email"
-                type="email"
-                autoComplete="email"
-                className={`mt-1 appearance-none relative block w-full px-3 py-2 border placeholder-gray-500 text-gray-900 rounded-md focus:outline-none sm:text-sm ${
-                  errors.email 
-                    ? 'border-red-300 focus:ring-red-500 focus:border-red-500' 
-                    : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'
-                }`}
-                placeholder="Email address"
-              />
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
-              )}
-            </div>
-            
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Password
-              </label>
-              <input
-                {...register('password')}
-                id="password"
-                type="password"
-                autoComplete="new-password"
-                className={`mt-1 appearance-none relative block w-full px-3 py-2 border placeholder-gray-500 text-gray-900 rounded-md focus:outline-none sm:text-sm ${
-                  errors.password 
-                    ? 'border-red-300 focus:ring-red-500 focus:border-red-500' 
-                    : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'
-                }`}
-                placeholder="Password"
-              />
-              {errors.password && (
-                <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
-              )}
-            </div>
-          </div>
+            </CardContent>
 
-          <div>
-            <button
-              type="submit"
-              disabled={registerMutation.isPending || isSubmitting}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-            >
-              {(registerMutation.isPending || isSubmitting) ? 'Creating account...' : 'Create account'}
-            </button>
-          </div>
+            <CardFooter className="flex flex-col space-y-4">
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={registerMutation.isPending || isSubmitting}
+              >
+                {(registerMutation.isPending || isSubmitting) ? 'Creating account...' : 'Create account'}
+              </Button>
 
-          <div className="text-center">
-            <p className="text-sm text-gray-600">
-              Already have an account?{' '}
-              <a href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
-                Sign in
-              </a>
-            </p>
-          </div>
-        </form>
+              <p className="text-sm text-center text-muted-foreground">
+                Already have an account?{' '}
+                <Link href="/login" className="font-medium text-primary hover:underline">
+                  Sign in
+                </Link>
+              </p>
+            </CardFooter>
+          </form>
         )}
-      </div>
+      </Card>
     </div>
   );
 }
