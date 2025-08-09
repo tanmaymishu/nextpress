@@ -20,7 +20,8 @@ export class LoginController {
       .then((user) => {
         res.cookie('jwt', user.token, {
           httpOnly: true,
-          secure: process.env.NODE_ENV === 'production' // Should be true on production
+          secure: process.env.NODE_ENV === 'production', // Should be true on production
+          sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax' // Required for cross-origin cookies
         });
         return res.json({ user });
       })
