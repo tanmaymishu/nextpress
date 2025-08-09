@@ -62,6 +62,7 @@ app.use(
     cookie: {
       httpOnly: true, // if true prevent client side JS from reading the cookie
       secure: process.env.NODE_ENV === 'production', // if true only transmit cookie over https
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // required for cross-origin cookies
       maxAge: 1000 * 60 * 60 * 24 // session max age in miliseconds
     }
   })
@@ -107,7 +108,7 @@ app.use(multer().any());
 // Enable CORS with credentials support
 app.use(cors({
   origin: process.env.NODE_ENV === 'production'
-    ? ['https://nextpress-kit.vercel.app']
+    ? [process.env.FRONTEND_URL || 'https://nextpress-kit.vercel.app']
     : ['http://localhost:3001'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
