@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {
-    "postinstall": "if [ \"$VERCEL\" = \"1\" ] || [ \"$RENDER\" = \"1\" ] || [ \"$CI\" = \"true\" ]; then echo \"Skipping migrations in deployment environment\"; exit 0; fi && if [ -e .env ]; then echo \".env exists\"; else echo \".env not found, copying .env.example\"; cp .env.example .env; fi && echo \"Setting up SQLite database...\" && pnpm migrate",
+    "postinstall": "echo \"Environment check: VERCEL=$VERCEL, RENDER=$RENDER, CI=$CI, RENDER_SERVICE_ID=$RENDER_SERVICE_ID\" && if [ \"$VERCEL\" = \"1\" ] || [ \"$RENDER\" = \"1\" ] || [ \"$CI\" = \"true\" ] || [ -n \"$RENDER_SERVICE_ID\" ]; then echo \"Skipping migrations in deployment environment\"; exit 0; fi && if [ -e .env ]; then echo \".env exists\"; else echo \".env not found, copying .env.example\"; cp .env.example .env; fi && echo \"Setting up SQLite database...\" && pnpm migrate",
     "typeorm": "typeorm-ts-node-commonjs",
     "build": "tsc && cp -R src/views dist/views",
     "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/index.ts",
