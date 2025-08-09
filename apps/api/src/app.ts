@@ -158,8 +158,8 @@ app.use('/admin/queues', serverAdapter.getRouter());
 app.set('views', path.join(__dirname, './views'));
 app.set('view engine', 'ejs');
 
-// Serve static files
-app.use(express.static(path.join(__dirname, '../public')));
+// Serve static files from root public directory
+app.use(express.static(path.join(__dirname, '../../../public')));
 useContainer(Container);
 
 useExpressServer(app, {
