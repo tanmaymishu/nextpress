@@ -126,7 +126,7 @@ const limiter = rateLimit({
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
-  skip: (req) => req.path === '/api/v1/ping', // Skip rate limiting for health check endpoint
+  skip: (req) => req.path === '/v1/ping' || req.url === '/api/v1/ping', // Skip rate limiting for health check endpoint
 });
 
 app.use('/api/', limiter);
