@@ -152,4 +152,22 @@ html {
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Disable default browser outline */
+  *:focus {
+    outline: none;
+  }
+
+  /* Disable Tailwind CSS ring utility */
+  *:focus-visible {
+    outline: none;
+    box-shadow: none; /* In case any component uses box-shadow for focus indication */
+    --tw-ring-color: transparent !important; /* Ensure Tailwind's ring color is transparent */
+    --tw-ring-offset-color: transparent !important; /* Ensure Tailwind's ring offset is transparent */
+  }
+
+  button:not([disabled]),
+  [role="button"]:not([disabled]) {
+    cursor: pointer;
+  }
 }
