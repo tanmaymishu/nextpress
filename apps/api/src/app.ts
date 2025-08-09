@@ -108,7 +108,7 @@ app.use(multer().any());
 // Enable CORS with credentials support
 app.use(cors({
   origin: process.env.NODE_ENV === 'production'
-    ? [process.env.FRONTEND_URL || 'https://nextpress-kit.vercel.app']
+    ? [process.env.FRONTEND_URL || 'https://nextpress-demo.vercel.app']
     : ['http://localhost:3001'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -126,6 +126,7 @@ const limiter = rateLimit({
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => req.path === '/api/v1/ping', // Skip rate limiting for health check endpoint
 });
 
 app.use('/api/', limiter);
