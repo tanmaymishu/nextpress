@@ -1,49 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { ApiClient } from '@/lib/api';
-import { MeResponse } from '@repo/shared';
+import { useAuth } from '@/contexts/AuthContext';
+import { useLogout } from '@/hooks/api/useAuth';
 
 export default function DashboardPage() {
-  const router = useRouter();
-  const [user, setUser] = useState<MeResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const api = new ApiClient();
-        const userData = await api.me();
-        setUser(userData);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch user data');
-        // Redirect to login if unauthorized
-        if (err instanceof Error && err.message.includes('401')) {
-          router.push('/login');
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, [router]);
+  const { user, isLoading, error } = useAuth();
+  const logoutMutation = useLogout();
 
   const handleLogout = async () => {
-    try {
-      const api = new ApiClient();
-      await api.logout();
-      router.push('/login');
-    } catch (err) {
-      console.error('Logout error:', err);
-      // Still redirect even if logout fails
-      router.push('/login');
-    }
+    logoutMutation.mutate();
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-500"></div>
@@ -56,14 +24,8 @@ export default function DashboardPage() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="max-w-md w-full">
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            {error}
+            {error.message}
           </div>
-          <button
-            onClick={() => router.push('/login')}
-            className="w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
-          >
-            Go to Login
-          </button>
         </div>
       </div>
     );

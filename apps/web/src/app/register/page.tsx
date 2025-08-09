@@ -1,58 +1,28 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { ApiClient } from '@/lib/api';
+import { useState } from 'react';
+import { useRegister } from '@/hooks/api/useAuth';
 import { RegisterRequest } from '@repo/shared';
 
 export default function RegisterPage() {
-  const router = useRouter();
   const [formData, setFormData] = useState<RegisterRequest>({
     firstName: '',
     lastName: '',
     email: '',
     password: ''
   });
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-
-  // Check if user is already authenticated
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const api = new ApiClient();
-        await api.me(); // If this succeeds, user is authenticated
-        router.push('/dashboard');
-      } catch (err) {
-        // User not authenticated, stay on register page
-      }
-    };
-    
-    checkAuth();
-  }, [router]);
+  
+  const registerMutation = useRegister();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError('');
-
-    try {
-      const api = new ApiClient();
-      const response = await api.register(formData);
-      
-      // Show success state
-      setSuccess(true);
-      
-      // Redirect to login after 2 seconds
-      setTimeout(() => {
-        router.push('/login');
-      }, 2000);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Registration failed');
-    } finally {
-      setLoading(false);
-    }
+    registerMutation.mutate(formData, {
+      onSuccess: () => {
+        setSuccess(true);
+        // The redirect is handled by the mutation
+      }
+    });
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,9 +55,9 @@ export default function RegisterPage() {
           </div>
         ) : (
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-            {error && (
+            {registerMutation.error && (
               <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                {error}
+                {registerMutation.error.message}
               </div>
             )}
           
@@ -163,10 +133,10 @@ export default function RegisterPage() {
           <div>
             <button
               type="submit"
-              disabled={loading}
+              disabled={registerMutation.isPending}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
             >
-              {loading ? 'Creating account...' : 'Create account'}
+              {registerMutation.isPending ? 'Creating account...' : 'Create account'}
             </button>
           </div>
 
