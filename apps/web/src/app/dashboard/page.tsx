@@ -21,7 +21,7 @@ export default function DashboardPage() {
         setError(err instanceof Error ? err.message : 'Failed to fetch user data');
         // Redirect to login if unauthorized
         if (err instanceof Error && err.message.includes('401')) {
-          router.push('/login?message=Please sign in to access the dashboard');
+          router.push('/login');
         }
       } finally {
         setLoading(false);
