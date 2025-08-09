@@ -14,6 +14,8 @@
     "migrate:make": "cd src/database/sql/migrations/ && typeorm-ts-node-commonjs migration:create",
     "migrate": "export NODE_ENV=development && typeorm-ts-node-commonjs migration:run -d src/database/sql/data-source.ts",
     "migrate:rollback": "export NODE_ENV=development && typeorm-ts-node-commonjs migration:revert -d src/database/sql/data-source.ts",
+    "migrate:fresh": "export NODE_ENV=development && ts-node -r tsconfig-paths/register src/scripts/fresh.ts",
+    "seed": "export NODE_ENV=development && ts-node -r tsconfig-paths/register src/scripts/seed.ts",
     "clean": "rm -rf dist"
   },
   "dependencies": {

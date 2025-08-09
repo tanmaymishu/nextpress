@@ -23,6 +23,12 @@
     "clean": {
       "cache": false
     },
+    "migrate:fresh": {
+      "cache": false
+    },
+    "seed": {
+      "cache": false
+    },
     "migrate": {
       "cache": false
     },

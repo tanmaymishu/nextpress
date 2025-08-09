@@ -8,6 +8,7 @@ import {
   ManyToMany
 } from 'typeorm';
 import { Role } from './Role';
+import { User } from './User';
 
 // Static permissions array - updated automatically on startup
 export const STATIC_PERMISSIONS = [
@@ -64,6 +65,10 @@ export class Permission extends BaseEntity {
   @ManyToMany(() => Role, role => role.permissions)
   roles!: Role[];
 
+  // Many-to-many relationship with Users (direct permissions)
+  @ManyToMany(() => User, user => user.permissions)
+  users!: User[];
+
   // Helper method
   async belongsToRole(roleName: string): Promise<boolean> {
     const roles = await this.roles;
@@ -72,16 +77,25 @@ export class Permission extends BaseEntity {
 
   // Static method to seed permissions
   static async seedPermissions(): Promise<void> {
-    const permissionRepository = Permission.getRepository();
-
     for (const permissionData of STATIC_PERMISSIONS) {
-      await permissionRepository.upsert(
-        {
-          name: permissionData.name,
-          label: permissionData.label
-        },
-        ['name'] // Conflict target
-      );
+      // Check if permission already exists
+      let permission = await Permission.findOne({
+        where: { name: permissionData.name }
+      });
+
+      if (permission) {
+        // Update existing permission if label has changed
+        if (permission.label !== permissionData.label) {
+          permission.label = permissionData.label;
+          await permission.save();
+        }
+      } else {
+        // Create new permission
+        permission = new Permission();
+        permission.name = permissionData.name;
+        permission.label = permissionData.label;
+        await permission.save();
+      }
     }
   }
 }

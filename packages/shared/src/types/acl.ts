@@ -11,10 +11,12 @@ export interface Role {
   id: number;
   name: string;
   label?: string;
+  description?: string;
   permissions?: Permission[];
   users?: User[];
   permissionsCount?: number;
   usersCount?: number;
+  userCount?: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -33,13 +35,13 @@ export interface User {
 // API Request/Response types
 export interface CreateRoleRequest {
   name: string;
-  label?: string;
+  description?: string;
   permissions?: string[];
 }
 
 export interface UpdateRoleRequest {
   name?: string;
-  label?: string;
+  description?: string;
   permissions?: string[];
 }
 
@@ -48,7 +50,7 @@ export interface CreateUserRequest {
   lastName: string;
   email: string;
   password: string;
-  roles?: string[];
+  roleIds?: number[];
 }
 
 export interface UpdateUserRequest {
@@ -56,7 +58,7 @@ export interface UpdateUserRequest {
   lastName?: string;
   email?: string;
   password?: string;
-  roles?: string[];
+  roleIds?: number[];
 }
 
 export interface AssignRolesRequest {

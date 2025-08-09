@@ -53,6 +53,15 @@ export class User extends BaseEntity {
   })
   roles!: Role[];
 
+  // Many-to-many relationship with Permissions (direct permissions)
+  @ManyToMany(() => Permission, permission => permission.users)
+  @JoinTable({
+    name: 'permission_user',
+    joinColumn: { name: 'user_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'permission_id', referencedColumnName: 'id' }
+  })
+  permissions!: Permission[];
+
   // Helper methods for ACL
   async hasRole(roleName: string): Promise<boolean> {
     const roles = await this.roles;
@@ -60,12 +69,20 @@ export class User extends BaseEntity {
   }
 
   async hasPermission(permissionName: string): Promise<boolean> {
+    // Check direct permissions first
+    const directPermissions = await this.permissions;
+    if (directPermissions && directPermissions.some(permission => permission.name === permissionName)) {
+      return true;
+    }
+
+    // Check role-based permissions
     const roles = await this.roles;
-    
-    for (const role of roles) {
-      const permissions = await role.permissions;
-      if (permissions.some(permission => permission.name === permissionName)) {
-        return true;
+    if (roles) {
+      for (const role of roles) {
+        const permissions = await role.permissions;
+        if (permissions && permissions.some(permission => permission.name === permissionName)) {
+          return true;
+        }
       }
     }
     
@@ -122,15 +139,64 @@ export class User extends BaseEntity {
   }
 
   async getPermissionNames(): Promise<string[]> {
-    const roles = await this.roles;
     const allPermissions: string[] = [];
 
-    for (const role of roles) {
-      const permissions = await role.permissions;
-      allPermissions.push(...permissions.map(permission => permission.name));
+    // Get direct permissions
+    const directPermissions = await this.permissions;
+    if (directPermissions) {
+      allPermissions.push(...directPermissions.map(permission => permission.name));
+    }
+
+    // Get role-based permissions
+    const roles = await this.roles;
+    if (roles) {
+      for (const role of roles) {
+        const permissions = await role.permissions;
+        if (permissions) {
+          allPermissions.push(...permissions.map(permission => permission.name));
+        }
+      }
     }
 
     // Remove duplicates
     return [...new Set(allPermissions)];
+  }
+
+  // Direct permission management methods
+  async assignPermission(permissionName: string): Promise<void> {
+    const permission = await Permission.findOne({ where: { name: permissionName } });
+    if (!permission) {
+      throw new Error(`Permission '${permissionName}' not found`);
+    }
+
+    const currentPermissions = await this.permissions;
+    if (!currentPermissions.some(p => p.id === permission.id)) {
+      currentPermissions.push(permission);
+      await this.save();
+    }
+  }
+
+  async removePermission(permissionName: string): Promise<void> {
+    const currentPermissions = await this.permissions;
+    this.permissions = currentPermissions.filter(p => p.name !== permissionName);
+    await this.save();
+  }
+
+  async assignAllPermissions(): Promise<void> {
+    // Get all permissions
+    const allPermissions = await Permission.find();
+    
+    // Get current permissions to avoid duplicates
+    const currentPermissions = await this.permissions || [];
+    const currentPermissionIds = new Set(currentPermissions.map(p => p.id));
+    
+    // Filter out permissions that are already assigned
+    const newPermissions = allPermissions.filter(p => !currentPermissionIds.has(p.id));
+    
+    if (newPermissions.length > 0) {
+      // Add only new permissions
+      this.permissions = [...currentPermissions, ...newPermissions];
+      await this.save();
+    }
   }
 }

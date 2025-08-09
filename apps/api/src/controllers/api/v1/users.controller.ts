@@ -11,6 +11,7 @@ import {
   Res,
   QueryParam
 } from 'routing-controllers';
+import { Service } from 'typedi';
 import { Request, Response } from 'express';
 import * as bcrypt from 'bcrypt';
 import { User } from '../../../database/sql/entities/User';
@@ -38,24 +39,26 @@ interface AssignRolesRequest {
   roles: string[];
 }
 
+@Service()
 @JsonController('/api/v1/users')
 export class UsersV1Controller {
 
   @Get('/')
-  @UseBefore(auth.api)
-  @UseBefore(requirePermission('users.read'))
+  @UseBefore(...auth.apiWithPermission('users.read'))
   async getUsers(
     @QueryParam('page') page: number = 1,
     @QueryParam('limit') limit: number = 10,
     @QueryParam('search') search?: string,
-    @QueryParam('role') roleFilter?: string
+    @QueryParam('role') roleFilter?: string,
+    @Req() req: Request
   ) {
     const take = Math.min(limit, 100); // Max 100 per page
     const skip = (page - 1) * take;
 
     const queryBuilder = User.createQueryBuilder('user')
       .leftJoinAndSelect('user.roles', 'roles')
-      .leftJoinAndSelect('roles.permissions', 'permissions');
+      .leftJoinAndSelect('roles.permissions', 'rolePermissions')
+      .leftJoinAndSelect('user.permissions', 'directPermissions');
 
     if (search) {
       queryBuilder.where(
@@ -102,7 +105,7 @@ export class UsersV1Controller {
   async getUser(@Param('id') id: number) {
     const user = await User.findOne({
       where: { id },
-      relations: ['roles', 'roles.permissions']
+      relations: ['roles', 'roles.permissions', 'permissions']
     });
 
     if (!user) {
@@ -164,7 +167,7 @@ export class UsersV1Controller {
     // Reload with relations
     const createdUser = await User.findOne({
       where: { id: user.id },
-      relations: ['roles']
+      relations: ['roles', 'permissions']
     });
 
     return {
@@ -227,7 +230,7 @@ export class UsersV1Controller {
     // Reload with relations
     const updatedUser = await User.findOne({
       where: { id: user.id },
-      relations: ['roles']
+      relations: ['roles', 'permissions']
     });
 
     return {

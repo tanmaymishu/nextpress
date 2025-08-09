@@ -138,7 +138,8 @@ async function fetchAvailablePermissions(): Promise<ACLApiResponse<Permission[]>
 }
 
 // Hooks
-export function useRoles(page: number = 1, limit: number = 10, search?: string) {
+export function useRoles(options: { page?: number; limit?: number; search?: string } = {}) {
+  const { page = 1, limit = 10, search } = options;
   return useQuery({
     queryKey: ['roles', page, limit, search],
     queryFn: () => fetchRoles(page, limit, search)

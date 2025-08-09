@@ -12,7 +12,7 @@ import {
   QueryParam
 } from 'routing-controllers';
 import { Request, Response } from 'express';
-import { Container } from 'typedi';
+import { Container, Service } from 'typedi';
 import { Role } from '../../../database/sql/entities/Role';
 import { Permission } from '../../../database/sql/entities/Permission';
 import auth from '../../../middleware/auth.middleware';
@@ -34,12 +34,12 @@ interface AssignPermissionsRequest {
   permissions: string[];
 }
 
+@Service()
 @JsonController('/api/v1/roles')
 export class RolesV1Controller {
 
   @Get('/')
-  @UseBefore(auth.api)
-  @UseBefore(requirePermission('roles.read'))
+  @UseBefore(...auth.apiWithPermission('roles.read'))
   async getRoles(
     @QueryParam('page') page: number = 1,
     @QueryParam('limit') limit: number = 10,
@@ -129,7 +129,7 @@ export class RolesV1Controller {
     const role = new Role();
     role.name = body.name;
     role.label = body.label;
-    
+
     await role.save();
 
     // Assign permissions if provided
@@ -240,7 +240,7 @@ export class RolesV1Controller {
   @UseBefore(requirePermission('permissions.read'))
   async getAvailablePermissions() {
     const permissions = await Permission.find();
-    
+
     return {
       data: permissions.map(p => ({
         id: p.id,

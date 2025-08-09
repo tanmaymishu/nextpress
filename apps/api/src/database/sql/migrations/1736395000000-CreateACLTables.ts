@@ -161,14 +161,6 @@ export class CreateACLTables1736395000000 implements MigrationInterface {
         ],
       }),
     );
-
-    // Create some default roles
-    await queryRunner.query(`
-      INSERT INTO roles (name, label) VALUES
-      ('admin', 'Administrator'),
-      ('user', 'Regular User'),
-      ('moderator', 'Moderator');
-    `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

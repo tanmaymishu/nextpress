@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { User } from '../database/sql/entities/User';
+import { User } from '@/database/sql/entities/User';
 
 /**
  * Middleware to check if user has a specific permission
@@ -8,7 +8,7 @@ export const requirePermission = (permissionName: string) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const user = req.user as User;
-      
+
       if (!user) {
         return res.status(401).json({
           error: 'Authentication required',
@@ -16,22 +16,22 @@ export const requirePermission = (permissionName: string) => {
         });
       }
 
-      // Load user with roles and permissions
-      const userWithRoles = await User.findOne({
+      // Load user with roles, role permissions, and direct permissions
+      const userWithPermissions = await User.findOne({
         where: { id: user.id },
-        relations: ['roles', 'roles.permissions']
+        relations: ['roles', 'roles.permissions', 'permissions']
       });
 
-      if (!userWithRoles) {
+      if (!userWithPermissions) {
         return res.status(401).json({
           error: 'User not found',
           code: 'USER_NOT_FOUND'
         });
       }
 
-      // Check if user has the required permission
-      const hasPermission = await userWithRoles.hasPermission(permissionName);
-      
+      // Check if user has the required permission (checks both direct and role-based permissions)
+      const hasPermission = await userWithPermissions.hasPermission(permissionName);
+
       if (!hasPermission) {
         return res.status(403).json({
           error: `Permission '${permissionName}' required`,
@@ -40,8 +40,8 @@ export const requirePermission = (permissionName: string) => {
         });
       }
 
-      // Attach user with roles to request for use in controllers
-      req.user = userWithRoles;
+      // Attach user with permissions to request for use in controllers
+      req.user = userWithPermissions;
       next();
     } catch (error) {
       console.error('Permission check error:', error);
@@ -60,7 +60,7 @@ export const requireAnyPermission = (permissionNames: string[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const user = req.user as User;
-      
+
       if (!user) {
         return res.status(401).json({
           error: 'Authentication required',
@@ -68,12 +68,12 @@ export const requireAnyPermission = (permissionNames: string[]) => {
         });
       }
 
-      const userWithRoles = await User.findOne({
+      const userWithPermissions = await User.findOne({
         where: { id: user.id },
-        relations: ['roles', 'roles.permissions']
+        relations: ['roles', 'roles.permissions', 'permissions']
       });
 
-      if (!userWithRoles) {
+      if (!userWithPermissions) {
         return res.status(401).json({
           error: 'User not found',
           code: 'USER_NOT_FOUND'
@@ -83,12 +83,12 @@ export const requireAnyPermission = (permissionNames: string[]) => {
       // Check if user has any of the required permissions
       let hasAnyPermission = false;
       for (const permissionName of permissionNames) {
-        if (await userWithRoles.hasPermission(permissionName)) {
+        if (await userWithPermissions.hasPermission(permissionName)) {
           hasAnyPermission = true;
           break;
         }
       }
-      
+
       if (!hasAnyPermission) {
         return res.status(403).json({
           error: `One of these permissions required: ${permissionNames.join(', ')}`,
@@ -97,7 +97,7 @@ export const requireAnyPermission = (permissionNames: string[]) => {
         });
       }
 
-      req.user = userWithRoles;
+      req.user = userWithPermissions;
       next();
     } catch (error) {
       console.error('Permission check error:', error);
@@ -116,7 +116,7 @@ export const requireRole = (roleName: string) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const user = req.user as User;
-      
+
       if (!user) {
         return res.status(401).json({
           error: 'Authentication required',
@@ -124,20 +124,20 @@ export const requireRole = (roleName: string) => {
         });
       }
 
-      const userWithRoles = await User.findOne({
+      const userWithPermissions = await User.findOne({
         where: { id: user.id },
-        relations: ['roles']
+        relations: ['roles', 'permissions']
       });
 
-      if (!userWithRoles) {
+      if (!userWithPermissions) {
         return res.status(401).json({
           error: 'User not found',
           code: 'USER_NOT_FOUND'
         });
       }
 
-      const hasRole = await userWithRoles.hasRole(roleName);
-      
+      const hasRole = await userWithPermissions.hasRole(roleName);
+
       if (!hasRole) {
         return res.status(403).json({
           error: `Role '${roleName}' required`,
@@ -146,7 +146,7 @@ export const requireRole = (roleName: string) => {
         });
       }
 
-      req.user = userWithRoles;
+      req.user = userWithPermissions;
       next();
     } catch (error) {
       console.error('Role check error:', error);
@@ -165,7 +165,7 @@ export const requireAnyRole = (roleNames: string[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const user = req.user as User;
-      
+
       if (!user) {
         return res.status(401).json({
           error: 'Authentication required',
@@ -173,20 +173,20 @@ export const requireAnyRole = (roleNames: string[]) => {
         });
       }
 
-      const userWithRoles = await User.findOne({
+      const userWithPermissions = await User.findOne({
         where: { id: user.id },
-        relations: ['roles']
+        relations: ['roles', 'permissions']
       });
 
-      if (!userWithRoles) {
+      if (!userWithPermissions) {
         return res.status(401).json({
           error: 'User not found',
           code: 'USER_NOT_FOUND'
         });
       }
 
-      const hasAnyRole = await userWithRoles.hasAnyRole(roleNames);
-      
+      const hasAnyRole = await userWithPermissions.hasAnyRole(roleNames);
+
       if (!hasAnyRole) {
         return res.status(403).json({
           error: `One of these roles required: ${roleNames.join(', ')}`,
@@ -195,7 +195,7 @@ export const requireAnyRole = (roleNames: string[]) => {
         });
       }
 
-      req.user = userWithRoles;
+      req.user = userWithPermissions;
       next();
     } catch (error) {
       console.error('Role check error:', error);

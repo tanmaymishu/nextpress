@@ -144,6 +144,12 @@ export default function DashboardPage() {
                   <button className="w-full text-left px-3 py-2 text-sm text-primary hover:bg-primary/10 rounded">
                     Change Password
                   </button>
+                  <Link 
+                    href="/admin/acl" 
+                    className="block w-full text-left px-3 py-2 text-sm text-primary hover:bg-primary/10 rounded"
+                  >
+                    Admin Panel (ACL)
+                  </Link>
                   <button className="w-full text-left px-3 py-2 text-sm text-primary hover:bg-primary/10 rounded">
                     Account Settings
                   </button>

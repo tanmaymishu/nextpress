@@ -160,12 +160,13 @@ async function fetchAvailableRoles(): Promise<ACLApiResponse<Role[]>> {
 }
 
 // Hooks
-export function useUsers(
-  page: number = 1, 
-  limit: number = 10, 
-  search?: string, 
-  role?: string
-) {
+export function useUsers(options: { 
+  page?: number; 
+  limit?: number; 
+  search?: string; 
+  role?: string 
+} = {}) {
+  const { page = 1, limit = 10, search, role } = options;
   return useQuery({
     queryKey: ['users', page, limit, search, role],
     queryFn: () => fetchUsers(page, limit, search, role)

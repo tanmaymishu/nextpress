@@ -7,11 +7,6 @@ import auth from '@/middleware/auth.middleware';
 @Service()
 @Controller('/api/v1')
 export class UserController {
-  @Get('/users')
-  async index(@Req() req: Request, @Res() res: Response) {
-    const users = await User.find();
-    return res.json(users);
-  }
 
   @Get('/me')
   @UseBefore(auth.api)
@@ -20,15 +15,33 @@ export class UserController {
       return res.status(401).json({ message: 'Unauthorized' });
     }
 
-    const user = req.user as any;
+    const userId = (req.user as any).id;
+    
+    // Load user with roles, role permissions, and direct permissions
+    const userWithPermissions = await User.findOne({
+      where: { id: userId },
+      relations: ['roles', 'roles.permissions', 'permissions']
+    });
+
+    if (!userWithPermissions) {
+      return res.status(404).json({ message: 'User not found' });
+    }
     
     return res.json({
-      id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt
+      id: userWithPermissions.id,
+      firstName: userWithPermissions.firstName,
+      lastName: userWithPermissions.lastName,
+      email: userWithPermissions.email,
+      directPermissions: userWithPermissions.permissions?.map(p => p.name) || [],
+      roles: userWithPermissions.roles?.map(role => ({
+        id: role.id,
+        name: role.name,
+        label: role.label,
+        permissions: role.permissions?.map(p => p.name) || []
+      })) || [],
+      allPermissions: await userWithPermissions.getPermissionNames(),
+      createdAt: userWithPermissions.createdAt,
+      updatedAt: userWithPermissions.updatedAt
     });
   }
 }
