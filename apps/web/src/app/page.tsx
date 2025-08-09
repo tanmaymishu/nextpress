@@ -1,30 +1,9 @@
+import { HomeNavigation } from '@/components/HomeNavigation';
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-muted via-background to-muted/50">
-      {/* Navigation */}
-      <nav className="bg-card/80 backdrop-blur-md border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <h1 className="text-xl font-bold text-foreground">NextPress</h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              <a
-                href="/login"
-                className="text-muted-foreground hover:text-foreground px-3 py-2 text-sm font-medium"
-              >
-                Sign in
-              </a>
-              <a
-                href="/register"
-                className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-md text-sm font-medium"
-              >
-                Register
-              </a>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <HomeNavigation />
 
       {/* Hero Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
