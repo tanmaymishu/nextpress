@@ -33,8 +33,8 @@ export default function DashboardPage() {
 
   const handleLogout = async () => {
     try {
-      // Clear cookies by making a request to a logout endpoint (if it exists)
-      // For now, just redirect to login
+      const api = new ApiClient();
+      await api.logout();
       router.push('/login');
     } catch (err) {
       console.error('Logout error:', err);

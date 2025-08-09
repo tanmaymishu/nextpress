@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ApiClient } from '@/lib/api';
 import { LoginRequest } from '@repo/shared';
@@ -13,6 +13,21 @@ export default function LoginPage() {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Check if user is already authenticated
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const api = new ApiClient();
+        await api.me(); // If this succeeds, user is authenticated
+        router.push('/dashboard');
+      } catch (err) {
+        // User not authenticated, stay on login page
+      }
+    };
+    
+    checkAuth();
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
