@@ -19,7 +19,7 @@ export default function Home() {
                 href="/register"
                 className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium"
               >
-                Get Started
+                Register
               </a>
             </div>
           </div>
@@ -34,21 +34,17 @@ export default function Home() {
             <span className="block text-indigo-600">Monorepo Starter</span>
           </h1>
           <p className="mt-6 max-w-2xl mx-auto text-xl text-gray-500">
-            A production-ready fullstack template with TypeScript, authentication, 
+            A production-ready fullstack template with TypeScript, authentication,
             type-safe APIs, and modern development tools.
           </p>
           <div className="mt-8 flex justify-center space-x-4">
             <a
-              href="/register"
+              href="https://github.com/tanmaymishu/nextpress"
+              target="_blank"
+              rel="noopener noreferrer"
               className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-md text-lg font-medium"
             >
-              Start Building
-            </a>
-            <a
-              href="/login"
-              className="border border-gray-300 hover:border-gray-400 text-gray-700 px-8 py-3 rounded-md text-lg font-medium"
-            >
-              Sign In
+              View on Github
             </a>
           </div>
         </div>
@@ -142,14 +138,15 @@ export default function Home() {
               Ready to start your next project?
             </h2>
             <p className="mt-4 text-xl text-indigo-200">
-              Join thousands of developers using NextPress to build amazing applications.
+              Clone NextPress to build amazing applications.
             </p>
             <div className="mt-8">
               <a
-                href="/register"
+                href="https://github.com/tanmaymishu/nextpress"
+                target="_blank"
                 className="bg-white text-indigo-600 px-8 py-3 rounded-md text-lg font-medium hover:bg-gray-50"
               >
-                Create Account
+                Get Started
               </a>
             </div>
           </div>
@@ -161,7 +158,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center">
             <p className="text-gray-400">
-              © 2025 NextPress. A modern fullstack starter template.
+              © 2025 NextPress. Made with ❤️ by <a href="https://tanmaydas.com" className="hover:underline" target="_blank">Tanmay.</a>
             </p>
           </div>
         </div>

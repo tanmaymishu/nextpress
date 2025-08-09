@@ -71,14 +71,6 @@ nextpress/
   <img src=".github/home1.png" alt="NextPress Homepage Hero" width="800">
 </p>
 
-*Image 1*
-
-<p align="center">
-  <img src=".github/home2.png" alt="NextPress Homepage Features" width="800">
-</p>
-
-*Image 2*
-
 ### **Authenticated Dashboard**
 <p align="center">
   <img src=".github/dashboard.png" alt="NextPress Dashboard" width="800">
@@ -221,7 +213,7 @@ npx vercel --prod
 ### **Full-Stack Deployment Options:**
 
 #### **Option 1: Separate Deployments**
-- **Frontend**: Deploy `apps/web` to Vercel/Netlify  
+- **Frontend**: Deploy `apps/web` to Vercel/Netlify
 - **Backend**: Deploy `apps/api` to Railway/Render/Heroku
 - **Database**: Use managed SQLite (Turso) or PostgreSQL
 
@@ -232,7 +224,7 @@ npx vercel --prod
 
 #### **Option 3: Serverless (Advanced)**
 - Convert Express routes to Vercel API routes
-- Use Vercel Postgres or PlanetScale  
+- Use Vercel Postgres or PlanetScale
 - Deploy as single Next.js app with API routes
 
 ### **Environment Variables for Production:**
