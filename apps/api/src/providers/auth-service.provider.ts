@@ -27,10 +27,22 @@ export default class AuthServiceProvider extends ServiceProvider {
     passport.use(localStrategy);
 
     const opts = {
-      // jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       jwtFromRequest: function (req: Request) {
         let token = null;
-        if (req && req.cookies) token = req.cookies['jwt'];
+        
+        // First, check Authorization header (Bearer token)
+        if (req && req.headers && req.headers.authorization) {
+          const authHeader = req.headers.authorization;
+          if (authHeader.startsWith('Bearer ')) {
+            token = authHeader.substring(7); // Remove 'Bearer ' prefix
+          }
+        }
+        
+        // If no header token, fall back to cookie
+        if (!token && req && req.cookies) {
+          token = req.cookies['jwt'];
+        }
+        
         return token;
       },
       secretOrKey: process.env.JWT_SECRET!,

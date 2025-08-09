@@ -30,4 +30,25 @@ export class LoginController {
         return res.status(422).json({ message: 'Invalid username or password' });
       });
   }
+
+  @Post('/logout')
+  async logout(@Req() req: Request, @Res() res: Response) {
+    // Clear the JWT cookie
+    res.clearCookie('jwt', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+    });
+    
+    // Destroy session if it exists
+    if (req.session) {
+      req.session.destroy((err) => {
+        if (err) {
+          console.log('Session destruction error:', err);
+        }
+      });
+    }
+    
+    return res.json({ message: 'Logged out successfully' });
+  }
 }

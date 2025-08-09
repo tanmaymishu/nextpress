@@ -68,4 +68,8 @@ export class ApiClient {
   async me(): Promise<MeResponse> {
     return this.get<MeResponse>('/api/v1/me');
   }
+
+  async logout(): Promise<{ message: string }> {
+    return this.post<{ message: string }>('/api/v1/logout');
+  }
 }

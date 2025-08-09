@@ -68,7 +68,7 @@ nextpress/
 
 ### **HomePage**
 <p align="center">
-  <img src=".github/home1.png" alt="NextPress Homepage Hero" width="800">
+  <img src=".github/home.png" alt="NextPress Homepage Hero" width="800">
 </p>
 
 ### **Authenticated Dashboard**
