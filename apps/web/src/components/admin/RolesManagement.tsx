@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRoles, useCreateRole, useUpdateRole, useDeleteRole } from '@/hooks/api/useRoles';
+import { useRoles, useCreateRole, useUpdateRole, useDeleteRole, useAvailablePermissions } from '@/hooks/api/useRoles';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -24,8 +24,8 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { Role } from '@repo/shared';
-import { Pencil, Trash2, Plus, Shield } from 'lucide-react';
+import { Role, Permission } from '@repo/shared';
+import { Pencil, Trash2, Plus, Shield, Check } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 export default function RolesManagement() {
@@ -42,6 +42,8 @@ export default function RolesManagement() {
     search: searchTerm || undefined,
   });
 
+  const { data: permissionsResponse, isLoading: permissionsLoading } = useAvailablePermissions();
+
   const createRoleMutation = useCreateRole();
   const updateRoleMutation = useUpdateRole();
   const deleteRoleMutation = useDeleteRole();
@@ -49,12 +51,14 @@ export default function RolesManagement() {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
+    permissions: [] as string[],
   });
 
   const resetForm = () => {
     setFormData({
       name: '',
       description: '',
+      permissions: [],
     });
   };
 
@@ -64,6 +68,7 @@ export default function RolesManagement() {
       await createRoleMutation.mutateAsync({
         name: formData.name,
         description: formData.description,
+        permissions: formData.permissions.length > 0 ? formData.permissions : undefined,
       });
       toast({
         title: 'Success',
@@ -89,6 +94,7 @@ export default function RolesManagement() {
         id: selectedRole.id,
         name: formData.name,
         description: formData.description,
+        permissions: formData.permissions.length > 0 ? formData.permissions : undefined,
       });
       toast({
         title: 'Success',
@@ -131,6 +137,7 @@ export default function RolesManagement() {
     setFormData({
       name: role.name,
       description: role.description || '',
+      permissions: role.permissions?.map(p => p.name) || [],
     });
     setIsEditOpen(true);
   };
@@ -138,6 +145,30 @@ export default function RolesManagement() {
   const openCreateDialog = () => {
     resetForm();
     setIsCreateOpen(true);
+  };
+
+  const togglePermission = (permissionName: string) => {
+    setFormData(prev => ({
+      ...prev,
+      permissions: prev.permissions.includes(permissionName)
+        ? prev.permissions.filter(p => p !== permissionName)
+        : [...prev.permissions, permissionName]
+    }));
+  };
+
+  const selectAllPermissions = () => {
+    const allPermissions = permissionsResponse?.data?.map(p => p.name) || [];
+    setFormData(prev => ({
+      ...prev,
+      permissions: allPermissions
+    }));
+  };
+
+  const clearAllPermissions = () => {
+    setFormData(prev => ({
+      ...prev,
+      permissions: []
+    }));
   };
 
   if (rolesLoading) {
@@ -159,6 +190,7 @@ export default function RolesManagement() {
   const roles = rolesResponse?.data || [];
   const totalRoles = rolesResponse?.meta?.total || 0;
   const totalPages = Math.ceil(totalRoles / pageSize);
+  const availablePermissions = permissionsResponse?.data || [];
 
   return (
     <div className="space-y-4">
@@ -179,12 +211,12 @@ export default function RolesManagement() {
               Add Role
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-md">
+          <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
             <form onSubmit={handleCreateRole}>
               <DialogHeader>
                 <DialogTitle>Create New Role</DialogTitle>
                 <DialogDescription>
-                  Add a new role to the system. Permissions can be assigned separately.
+                  Add a new role to the system and assign permissions.
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
@@ -207,6 +239,66 @@ export default function RolesManagement() {
                     placeholder="Brief description of the role's purpose"
                     rows={3}
                   />
+                </div>
+                
+                {/* Permissions Section */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Label>Permissions ({formData.permissions.length} selected)</Label>
+                    <div className="flex gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={selectAllPermissions}
+                        disabled={permissionsLoading}
+                      >
+                        Select All
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={clearAllPermissions}
+                        disabled={permissionsLoading}
+                      >
+                        Clear All
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  {permissionsLoading ? (
+                    <div className="text-center py-4">Loading permissions...</div>
+                  ) : (
+                    <div className="border rounded-lg p-4 max-h-48 overflow-y-auto">
+                      <div className="grid grid-cols-2 gap-2">
+                        {availablePermissions.map((permission) => (
+                          <label
+                            key={permission.id}
+                            className="flex items-center space-x-2 cursor-pointer hover:bg-muted/50 p-2 rounded"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={formData.permissions.includes(permission.name)}
+                              onChange={() => togglePermission(permission.name)}
+                              className="rounded border-input"
+                            />
+                            <div className="flex-1 min-w-0">
+                              <div className="text-sm font-medium">{permission.name}</div>
+                              {permission.label && (
+                                <div className="text-xs text-muted-foreground truncate">
+                                  {permission.label}
+                                </div>
+                              )}
+                            </div>
+                            {formData.permissions.includes(permission.name) && (
+                              <Check className="h-4 w-4 text-primary" />
+                            )}
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
               <DialogFooter>
@@ -329,12 +421,12 @@ export default function RolesManagement() {
 
       {/* Edit Role Dialog */}
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
           <form onSubmit={handleUpdateRole}>
             <DialogHeader>
               <DialogTitle>Edit Role</DialogTitle>
               <DialogDescription>
-                Update role information. Permissions can be managed separately.
+                Update role information and permissions.
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
@@ -356,6 +448,66 @@ export default function RolesManagement() {
                   placeholder="Brief description of the role's purpose"
                   rows={3}
                 />
+              </div>
+              
+              {/* Permissions Section */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <Label>Permissions ({formData.permissions.length} selected)</Label>
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={selectAllPermissions}
+                      disabled={permissionsLoading}
+                    >
+                      Select All
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={clearAllPermissions}
+                      disabled={permissionsLoading}
+                    >
+                      Clear All
+                    </Button>
+                  </div>
+                </div>
+                
+                {permissionsLoading ? (
+                  <div className="text-center py-4">Loading permissions...</div>
+                ) : (
+                  <div className="border rounded-lg p-4 max-h-48 overflow-y-auto">
+                    <div className="grid grid-cols-2 gap-2">
+                      {availablePermissions.map((permission) => (
+                        <label
+                          key={permission.id}
+                          className="flex items-center space-x-2 cursor-pointer hover:bg-muted/50 p-2 rounded"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={formData.permissions.includes(permission.name)}
+                            onChange={() => togglePermission(permission.name)}
+                            className="rounded border-input"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <div className="text-sm font-medium">{permission.name}</div>
+                            {permission.label && (
+                              <div className="text-xs text-muted-foreground truncate">
+                                {permission.label}
+                              </div>
+                            )}
+                          </div>
+                          {formData.permissions.includes(permission.name) && (
+                            <Check className="h-4 w-4 text-primary" />
+                          )}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
             <DialogFooter>

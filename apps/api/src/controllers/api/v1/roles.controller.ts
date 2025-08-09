@@ -39,7 +39,7 @@ interface AssignPermissionsRequest {
 export class RolesV1Controller {
 
   @Get('/')
-  @UseBefore(...auth.apiWithPermission('roles.read'))
+  @UseBefore(...auth.permission('roles.read'))
   async getRoles(
     @QueryParam('page') page: number = 1,
     @QueryParam('limit') limit: number = 10,
@@ -83,8 +83,7 @@ export class RolesV1Controller {
   }
 
   @Get('/:id')
-  @UseBefore(auth.api)
-  @UseBefore(requirePermission('roles.read'))
+  @UseBefore(...auth.permission('roles.read'))
   async getRole(@Param('id') id: number) {
     const role = await Role.findOne({
       where: { id },
@@ -118,8 +117,7 @@ export class RolesV1Controller {
   }
 
   @Post('/')
-  @UseBefore(auth.api)
-  @UseBefore(requirePermission('roles.create'))
+  @UseBefore(...auth.permission('roles.create'))
   async createRole(@Body() body: CreateRoleRequest) {
     const existingRole = await Role.findOne({ where: { name: body.name } });
     if (existingRole) {
@@ -150,8 +148,7 @@ export class RolesV1Controller {
   }
 
   @Put('/:id')
-  @UseBefore(auth.api)
-  @UseBefore(requirePermission('roles.update'))
+  @UseBefore(...auth.permission('roles.update'))
   async updateRole(@Param('id') id: number, @Body() body: UpdateRoleRequest) {
     const role = await Role.findOne({ where: { id } });
     if (!role) {
@@ -190,8 +187,7 @@ export class RolesV1Controller {
   }
 
   @Delete('/:id')
-  @UseBefore(auth.api)
-  @UseBefore(requirePermission('roles.delete'))
+  @UseBefore(...auth.permission('roles.delete'))
   async deleteRole(@Param('id') id: number) {
     const role = await Role.findOne({
       where: { id },
@@ -220,8 +216,7 @@ export class RolesV1Controller {
   }
 
   @Post('/:id/permissions')
-  @UseBefore(auth.api)
-  @UseBefore(requirePermission('permissions.assign'))
+  @UseBefore(...auth.permission('permissions.assign'))
   async assignPermissions(@Param('id') id: number, @Body() body: AssignPermissionsRequest) {
     const role = await Role.findOne({ where: { id } });
     if (!role) {
@@ -236,8 +231,7 @@ export class RolesV1Controller {
   }
 
   @Get('/permissions/available')
-  @UseBefore(auth.api)
-  @UseBefore(requirePermission('permissions.read'))
+  @UseBefore(...auth.permission('permissions.read'))
   async getAvailablePermissions() {
     const permissions = await Permission.find();
 

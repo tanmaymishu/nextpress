@@ -44,7 +44,7 @@ interface AssignRolesRequest {
 export class UsersV1Controller {
 
   @Get('/')
-  @UseBefore(...auth.apiWithPermission('users.read'))
+  @UseBefore(...auth.permission('users.read'))
   async getUsers(
     @QueryParam('page') page: number = 1,
     @QueryParam('limit') limit: number = 10,
@@ -100,8 +100,7 @@ export class UsersV1Controller {
   }
 
   @Get('/:id')
-  @UseBefore(auth.api)
-  @UseBefore(requirePermission('users.read'))
+  @UseBefore(...auth.permission('users.read'))
   async getUser(@Param('id') id: number) {
     const user = await User.findOne({
       where: { id },
@@ -138,8 +137,7 @@ export class UsersV1Controller {
   }
 
   @Post('/')
-  @UseBefore(auth.api)
-  @UseBefore(requirePermission('users.create'))
+  @UseBefore(...auth.permission('users.create'))
   async createUser(@Body() body: CreateUserRequest) {
     const existingUser = await User.findOne({ where: { email: body.email } });
     if (existingUser) {
@@ -153,7 +151,7 @@ export class UsersV1Controller {
     user.lastName = body.lastName;
     user.email = body.email;
     user.password = hashedPassword;
-    
+
     await user.save();
 
     // Assign roles if provided
@@ -189,8 +187,7 @@ export class UsersV1Controller {
   }
 
   @Put('/:id')
-  @UseBefore(auth.api)
-  @UseBefore(requirePermission('users.update'))
+  @UseBefore(...auth.permission('users.update'))
   async updateUser(@Param('id') id: number, @Body() body: UpdateUserRequest, @Req() req: Request) {
     const user = await User.findOne({ where: { id } });
     if (!user) {
@@ -251,8 +248,7 @@ export class UsersV1Controller {
   }
 
   @Delete('/:id')
-  @UseBefore(auth.api)
-  @UseBefore(requirePermission('users.delete'))
+  @UseBefore(...auth.permission('users.delete'))
   async deleteUser(@Param('id') id: number, @Req() req: Request) {
     const user = await User.findOne({ where: { id } });
     if (!user) {
@@ -260,7 +256,7 @@ export class UsersV1Controller {
     }
 
     const currentUser = req.user as User;
-    
+
     // Prevent self-deletion
     if (currentUser.id === user.id) {
       throw new Error('You cannot delete your own account');
@@ -269,7 +265,7 @@ export class UsersV1Controller {
     // Prevent deletion of admin users by non-super-admin
     const userIsAdmin = await user.hasRole('admin');
     const currentUserIsAdmin = await currentUser.hasRole('admin');
-    
+
     if (userIsAdmin && !currentUserIsAdmin) {
       throw new Error('Only administrators can delete admin users');
     }
@@ -282,8 +278,7 @@ export class UsersV1Controller {
   }
 
   @Post('/:id/roles')
-  @UseBefore(auth.api)
-  @UseBefore(requirePermission('users.update'))
+  @UseBefore(...auth.permission('users.update'))
   async assignRoles(@Param('id') id: number, @Body() body: AssignRolesRequest) {
     const user = await User.findOne({ where: { id } });
     if (!user) {
@@ -298,8 +293,7 @@ export class UsersV1Controller {
   }
 
   @Get('/:id/permissions')
-  @UseBefore(auth.api)
-  @UseBefore(requirePermission('users.read'))
+  @UseBefore(...auth.permission('users.read'))
   async getUserPermissions(@Param('id') id: number) {
     const user = await User.findOne({ where: { id } });
     if (!user) {
@@ -319,11 +313,10 @@ export class UsersV1Controller {
   }
 
   @Get('/roles/available')
-  @UseBefore(auth.api)
-  @UseBefore(requirePermission('roles.read'))
+  @UseBefore(...auth.permission('roles.read'))
   async getAvailableRoles() {
     const roles = await Role.find();
-    
+
     return {
       data: roles.map(role => ({
         id: role.id,
