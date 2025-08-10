@@ -9,7 +9,8 @@ module.exports = {
     '<rootDir>/src/**/*.test.ts'
   ],
 
-  // Coverage settings
+  // Coverage settings (disabled by default for performance)
+  collectCoverage: false,
   collectCoverageFrom: [
     'src/**/*.{ts,js}',
     '!src/**/*.d.ts',
@@ -27,7 +28,6 @@ module.exports = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^@repo/shared/(.*)$': '<rootDir>/../../packages/shared/src/$1',
-    '^ioredis$': '<rootDir>/tests/__mocks__/ioredis.js',
     '^bullmq$': '<rootDir>/tests/__mocks__/bullmq.js'
   },
 
@@ -49,13 +49,15 @@ module.exports = {
   detectOpenHandles: false,
   forceExit: true,
 
-  // Verbose output for debugging
-  verbose: true,
+  // Verbose output for debugging (disabled for performance)
+  verbose: false,
 
   // Run tests serially to avoid database connection issues (CRITICAL for DB tests)
   maxWorkers: 1,
 
-  // Suppress console errors/warnings during tests for cleaner output
-  setupFilesAfterEnv: ['<rootDir>/tests/setupTests.js'],
+  // Set up mocks for tests
+  setupFilesAfterEnv: [
+    '<rootDir>/tests/setupMocks.js'
+  ],
   moduleDirectories: ['node_modules', '<rootDir>/node_modules'],
 };

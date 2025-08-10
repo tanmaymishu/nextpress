@@ -11,8 +11,8 @@ module.exports = async () => {
       });
     });
     
-    // Wait a moment for cleanup
-    await new Promise(resolve => setTimeout(resolve, 500));
+    // Wait a brief moment for cleanup
+    await new Promise(resolve => setTimeout(resolve, 100));
     
     console.log('🎉 All tests completed, connections cleaned up');
   } catch (error) {

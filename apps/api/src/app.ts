@@ -37,21 +37,10 @@ import DatabaseServiceProvider from '@/providers/database-service.provider';
 const providers = [AppServiceProvider, DatabaseServiceProvider, AuthServiceProvider];
 providers.forEach((provider) => new provider().register());
 
-// Mock Redis client for tests
-class MockRedisClient {
-  async get(key: string) { return null; }
-  async set(key: string, value: any) { return 'OK'; }
-  async del(key: string) { return 1; }
-  async disconnect() { return Promise.resolve(); }
-  on(event: string, callback: any) { return this; }
-}
-
-const redisClient = process.env.NODE_ENV === 'test' 
-  ? new MockRedisClient() as any
-  : new IORedis({
-      port: parseInt(process.env.REDIS_PORT || '6379'),
-      host: process.env.REDIS_HOST || 'localhost'
-    });
+const redisClient = new IORedis({
+  port: parseInt(process.env.REDIS_PORT || '6379'),
+  host: process.env.REDIS_HOST || 'localhost'
+});
 
 const RedisStore = connectRedis(session);
 
@@ -66,25 +55,22 @@ app.use(cookieParser());
 
 //Configure session middleware
 // Configure session store - use memory store for tests, Redis for production
-const sessionConfig = process.env.NODE_ENV === 'test' 
-  ? {
-      secret: process.env.JWT_SECRET as string,
-      resave: false,
-      saveUninitialized: false,
-      cookie: { httpOnly: true, secure: false, sameSite: 'lax' as const, maxAge: 1000 * 60 * 60 * 24 }
-    }
-  : {
-      store: new RedisStore({ client: redisClient }),
-      secret: process.env.JWT_SECRET as string,
-      resave: false,
-      saveUninitialized: false,
-      cookie: {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' as const : 'lax' as const,
-        maxAge: 1000 * 60 * 60 * 24
-      }
-    };
+const sessionConfig: any = {
+  secret: process.env.JWT_SECRET as string,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' as const : 'lax' as const,
+    maxAge: 1000 * 60 * 60 * 24
+  }
+};
+
+// Only use Redis store in non-test environments
+if (process.env.NODE_ENV !== 'test') {
+  sessionConfig.store = new RedisStore({ client: redisClient });
+}
 
 app.use(session(sessionConfig));
 

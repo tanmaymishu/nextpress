@@ -35,7 +35,7 @@ describe('Users API', () => {
     adminToken = adminUser.token;
 
     // Create regular user
-    const hashedPassword = await bcrypt.hash('password', 10);
+    const hashedPassword = await bcrypt.hash('password', 1);
     regularUser = new User();
     regularUser.firstName = 'Regular';
     regularUser.lastName = 'User';
@@ -109,7 +109,7 @@ describe('Users API', () => {
 
     it('should deny access without proper permissions', async () => {
       // Create user without users.read permission
-      const hashedPassword = await bcrypt.hash('password', 10);
+      const hashedPassword = await bcrypt.hash('password', 1);
       const noPermUser = new User();
       noPermUser.firstName = 'No';
       noPermUser.lastName = 'Permission';
@@ -313,7 +313,7 @@ describe('Users API', () => {
 
     it('should deny access for updating other users without permission', async () => {
       // Create user without users.update permission
-      const hashedPassword = await bcrypt.hash('password', 10);
+      const hashedPassword = await bcrypt.hash('password', 1);
       const noPermUser = new User();
       noPermUser.firstName = 'No';
       noPermUser.lastName = 'Permission';

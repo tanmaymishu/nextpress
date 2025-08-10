@@ -36,7 +36,7 @@ describe('Roles API', () => {
     adminToken = adminUser.token;
 
     // Create regular user with roles.read permission
-    const hashedPassword = await bcrypt.hash('password', 10);
+    const hashedPassword = await bcrypt.hash('password', 1);
     regularUser = new User();
     regularUser.firstName = 'Regular';
     regularUser.lastName = 'User';
@@ -120,7 +120,7 @@ describe('Roles API', () => {
 
     it('should deny access without proper permissions', async () => {
       // Create user without roles.read permission
-      const hashedPassword = await bcrypt.hash('password', 10);
+      const hashedPassword = await bcrypt.hash('password', 1);
       const noPermUser = new User();
       noPermUser.firstName = 'No';
       noPermUser.lastName = 'Permission';
@@ -170,7 +170,7 @@ describe('Roles API', () => {
 
     it('should deny access without proper permissions', async () => {
       // Create user without roles.read permission
-      const hashedPassword = await bcrypt.hash('password', 10);
+      const hashedPassword = await bcrypt.hash('password', 1);
       const noPermUser = new User();
       noPermUser.firstName = 'No';
       noPermUser.lastName = 'Permission';
@@ -409,7 +409,7 @@ describe('Roles API', () => {
       permUser.firstName = 'Perm';
       permUser.lastName = 'User';
       permUser.email = 'perm@test.com';
-      permUser.password = await bcrypt.hash('password', 10);
+      permUser.password = await bcrypt.hash('password', 1);
       await permUser.save();
       await permUser.assignPermission('permissions.assign');
 
@@ -440,7 +440,7 @@ describe('Roles API', () => {
       noPermUser.firstName = 'No';
       noPermUser.lastName = 'Permission';
       noPermUser.email = 'nopermassg@test.com';
-      noPermUser.password = await bcrypt.hash('password', 10);
+      noPermUser.password = await bcrypt.hash('password', 1);
       await noPermUser.save();
 
       const loginResult = await authService.login({
@@ -470,7 +470,7 @@ describe('Roles API', () => {
       permUser.firstName = 'Perm';
       permUser.lastName = 'Reader';
       permUser.email = 'permreader@test.com';
-      permUser.password = await bcrypt.hash('password', 10);
+      permUser.password = await bcrypt.hash('password', 1);
       await permUser.save();
       await permUser.assignPermission('permissions.read');
 
@@ -500,7 +500,7 @@ describe('Roles API', () => {
       noPermUser.firstName = 'No';
       noPermUser.lastName = 'Permission';
       noPermUser.email = 'noperms@test.com';
-      noPermUser.password = await bcrypt.hash('password', 10);
+      noPermUser.password = await bcrypt.hash('password', 1);
       await noPermUser.save();
 
       const loginResult = await authService.login({

@@ -120,7 +120,7 @@ describe('Authentication API', () => {
 
     beforeEach(async () => {
       // Create a test user
-      const hashedPassword = await bcrypt.hash('password123', 10);
+      const hashedPassword = await bcrypt.hash('password123', 1);
       testUser = new User();
       testUser.firstName = 'John';
       testUser.lastName = 'Doe';
