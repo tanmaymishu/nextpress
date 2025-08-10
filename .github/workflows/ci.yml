@@ -41,5 +41,6 @@ jobs:
           cache: 'pnpm'
 
       - run: pnpm install --frozen-lockfile
+      - run: sudo apt-get update && sudo apt-get install -y build-essential python3
       - run: npm rebuild better-sqlite3 --build-from-source
       - run: pnpm test
