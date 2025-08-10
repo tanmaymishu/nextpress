@@ -41,5 +41,5 @@ jobs:
           cache: 'pnpm'
 
       - run: pnpm install --frozen-lockfile
-      - run: pnpm rebuild better-sqlite3
+      - run: npm rebuild better-sqlite3 --build-from-source
       - run: pnpm test
