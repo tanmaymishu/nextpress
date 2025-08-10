@@ -116,7 +116,7 @@ describe('ACL System', () => {
 
     beforeEach(async () => {
       await seederService.seedPermissions();
-      const hashedPassword = await bcrypt.hash('testpassword', 10);
+      const hashedPassword = await bcrypt.hash('testpassword', 1);
 
       testUser = new User();
       testUser.firstName = 'Test';

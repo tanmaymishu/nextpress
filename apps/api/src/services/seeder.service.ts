@@ -31,7 +31,7 @@ export class SeederService {
       if (userCount === 0) {
         logger.info('No users found. Creating default admin user...');
 
-        const hashedPassword = await bcrypt.hash('password', 10);
+        const hashedPassword = await bcrypt.hash('password', process.env.NODE_ENV === 'test' ? 1 : 10);
 
         const admin = new User();
         admin.firstName = 'Admin';

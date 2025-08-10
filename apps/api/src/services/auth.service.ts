@@ -17,7 +17,7 @@ export default class AuthService {
     user.firstName = body.firstName;
     user.lastName = body.lastName;
     user.email = body.email;
-    user.password = bcrypt.hashSync(body.password, 10);
+    user.password = bcrypt.hashSync(body.password, process.env.NODE_ENV === 'test' ? 1 : 10);
 
     // Save user first to get an ID
     await user.save();

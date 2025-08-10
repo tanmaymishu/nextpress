@@ -9,11 +9,9 @@ export async function initDB() {
     await AppDataSource.initialize();
   }
 
-  // Drop all tables and recreate from entity definitions for clean test state
+  // Drop all tables and recreate from entity definitions for clean test state (faster than migrations)
   await AppDataSource.dropDatabase();
-  await AppDataSource.runMigrations({
-    transaction: 'none',
-  });
+  await AppDataSource.synchronize();
 }
 
 export async function refreshDB(seed: boolean = false) {
