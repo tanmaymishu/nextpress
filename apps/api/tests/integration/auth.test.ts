@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import request from 'supertest';
 import app from '../../src/app';
-import { refreshDB, initUser } from '../bootstrap';
+import { refreshDB } from '../bootstrap';
 import { describe, beforeEach, it, expect } from '@jest/globals';
 import { User } from '../../src/database/sql/entities/User';
 import bcrypt from 'bcrypt';
@@ -148,7 +148,7 @@ describe('Authentication API', () => {
       // Check that JWT cookie is set
       const cookies = response.headers['set-cookie'];
       expect(cookies).toBeDefined();
-      expect(cookies.some((cookie: string) => cookie.startsWith('jwt='))).toBe(true);
+      expect(Array.isArray(cookies) && cookies.some((cookie: string) => cookie.startsWith('jwt='))).toBe(true);
     });
 
     it('should reject login with invalid email', async () => {
@@ -207,7 +207,7 @@ describe('Authentication API', () => {
 
       // Check that JWT cookie is cleared
       const cookies = response.headers['set-cookie'];
-      if (cookies) {
+      if (cookies && Array.isArray(cookies)) {
         const jwtCookie = cookies.find((cookie: string) => cookie.startsWith('jwt='));
         if (jwtCookie) {
           expect(jwtCookie).toContain('jwt=;'); // Empty value indicates cleared cookie

@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import request from 'supertest';
 import app from '../../src/app';
-import { refreshDB, initUser } from '../bootstrap';
+import { refreshDB } from '../bootstrap';
 import { describe, beforeEach, it, expect } from '@jest/globals';
 import { User } from '../../src/database/sql/entities/User';
 import { Role } from '../../src/database/sql/entities/Role';
@@ -11,7 +11,7 @@ import bcrypt from 'bcrypt';
 
 describe('Users API', () => {
   let adminToken: string;
-  let adminUser: User;
+  let adminUser: any;
   let regularToken: string;
   let regularUser: User;
   let authService: AuthService;
