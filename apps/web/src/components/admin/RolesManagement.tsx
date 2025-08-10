@@ -6,13 +6,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
 } from '@/components/ui/table';
 import {
   Dialog,
@@ -24,9 +24,10 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Role, Permission } from '@repo/shared';
 import { Pencil, Trash2, Plus, Shield, Check } from 'lucide-react';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 export default function RolesManagement() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -70,18 +71,11 @@ export default function RolesManagement() {
         description: formData.description,
         permissions: formData.permissions.length > 0 ? formData.permissions : undefined,
       });
-      toast({
-        title: 'Success',
-        description: 'Role created successfully',
-      });
+      toast.success('Role created successfully');
       setIsCreateOpen(false);
       resetForm();
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to create role',
-        variant: 'destructive',
-      });
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to create role');
     }
   };
 
@@ -96,39 +90,21 @@ export default function RolesManagement() {
         description: formData.description,
         permissions: formData.permissions.length > 0 ? formData.permissions : undefined,
       });
-      toast({
-        title: 'Success',
-        description: 'Role updated successfully',
-      });
+      toast.success('Role updated successfully');
       setIsEditOpen(false);
       setSelectedRole(null);
       resetForm();
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to update role',
-        variant: 'destructive',
-      });
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to update role');
     }
   };
 
   const handleDeleteRole = async (role: Role) => {
-    if (!confirm(`Are you sure you want to delete role "${role.name}"?`)) {
-      return;
-    }
-
     try {
       await deleteRoleMutation.mutateAsync(role.id);
-      toast({
-        title: 'Success',
-        description: 'Role deleted successfully',
-      });
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to delete role',
-        variant: 'destructive',
-      });
+      toast.success('Role deleted successfully');
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to delete role');
     }
   };
 
@@ -240,7 +216,7 @@ export default function RolesManagement() {
                     rows={3}
                   />
                 </div>
-                
+
                 {/* Permissions Section */}
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
@@ -266,7 +242,7 @@ export default function RolesManagement() {
                       </Button>
                     </div>
                   </div>
-                  
+
                   {permissionsLoading ? (
                     <div className="text-center py-4">Loading permissions...</div>
                   ) : (
@@ -275,7 +251,7 @@ export default function RolesManagement() {
                         {availablePermissions.map((permission) => (
                           <label
                             key={permission.id}
-                            className="flex items-center space-x-2 cursor-pointer hover:bg-muted/50 p-2 rounded"
+                            className="flex items-center space-x-2 p-2 rounded cursor-pointer hover:bg-muted/50"
                           >
                             <input
                               type="checkbox"
@@ -375,15 +351,48 @@ export default function RolesManagement() {
                     >
                       <Pencil className="h-4 w-4" />
                     </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDeleteRole(role)}
-                      className="text-destructive hover:text-destructive"
-                      disabled={role.name === 'admin'} // Prevent deleting admin role
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-destructive hover:text-destructive"
+                          disabled={role.name === 'admin'} // Prevent deleting admin role
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-80">
+                        <div className="grid gap-4">
+                          <div className="space-y-2">
+                            <h4 className="font-medium leading-none">Delete Role</h4>
+                            <p className="text-sm text-muted-foreground">
+                              Are you sure you want to delete the role "{role.name}"? This action cannot be undone.
+                            </p>
+                          </div>
+                          <div className="flex gap-2 justify-end">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                // Close the popover by clicking outside or programmatically
+                                document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+                              }}
+                            >
+                              Cancel
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => handleDeleteRole(role)}
+                              disabled={deleteRoleMutation.isPending}
+                            >
+                              {deleteRoleMutation.isPending ? 'Deleting...' : 'Delete'}
+                            </Button>
+                          </div>
+                        </div>
+                      </PopoverContent>
+                    </Popover>
                   </div>
                 </TableCell>
               </TableRow>
@@ -449,7 +458,7 @@ export default function RolesManagement() {
                   rows={3}
                 />
               </div>
-              
+
               {/* Permissions Section */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -475,7 +484,7 @@ export default function RolesManagement() {
                     </Button>
                   </div>
                 </div>
-                
+
                 {permissionsLoading ? (
                   <div className="text-center py-4">Loading permissions...</div>
                 ) : (
@@ -484,7 +493,7 @@ export default function RolesManagement() {
                       {availablePermissions.map((permission) => (
                         <label
                           key={permission.id}
-                          className="flex items-center space-x-2 cursor-pointer hover:bg-muted/50 p-2 rounded"
+                          className="flex items-center space-x-2 p-2 rounded cursor-pointer hover:bg-muted/50"
                         >
                           <input
                             type="checkbox"

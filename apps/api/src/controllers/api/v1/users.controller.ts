@@ -8,16 +8,14 @@ import {
   Body,
   UseBefore,
   Req,
-  Res,
   QueryParam
 } from 'routing-controllers';
 import { Service } from 'typedi';
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import * as bcrypt from 'bcrypt';
-import { User } from '../../../database/sql/entities/User';
-import { Role } from '../../../database/sql/entities/Role';
-import auth from '../../../middleware/auth.middleware';
-import { requirePermission } from '../../../middleware/permission.middleware';
+import { User } from '@/database/sql/entities/User';
+import { Role } from '@/database/sql/entities/Role';
+import auth from '@/middleware/auth.middleware';
 
 interface CreateUserRequest {
   firstName: string;
@@ -49,8 +47,7 @@ export class UsersV1Controller {
     @QueryParam('page') page: number = 1,
     @QueryParam('limit') limit: number = 10,
     @QueryParam('search') search?: string,
-    @QueryParam('role') roleFilter?: string,
-    @Req() req: Request
+    @QueryParam('role') roleFilter?: string
   ) {
     const take = Math.min(limit, 100); // Max 100 per page
     const skip = (page - 1) * take;
@@ -82,6 +79,7 @@ export class UsersV1Controller {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
+        isAdmin: user.isAdmin,
         roles: user.roles.map(role => ({
           id: role.id,
           name: role.name,
@@ -119,6 +117,7 @@ export class UsersV1Controller {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
+        isAdmin: user.isAdmin,
         roles: user.roles.map(role => ({
           id: role.id,
           name: role.name,
@@ -137,7 +136,7 @@ export class UsersV1Controller {
   }
 
   @Post('/')
-  @UseBefore(...auth.permission('users.create'))
+  @UseBefore(...auth.admin())
   async createUser(@Body() body: CreateUserRequest) {
     const existingUser = await User.findOne({ where: { email: body.email } });
     if (existingUser) {
@@ -154,12 +153,12 @@ export class UsersV1Controller {
 
     await user.save();
 
-    // Assign roles if provided
+    // Assign roles if provided, otherwise assign default user permissions
     if (body.roles && body.roles.length > 0) {
       await user.syncRoles(body.roles);
     } else {
-      // Assign default 'user' role
-      await user.assignRole('user');
+      // Assign default permissions (all except user edit/delete)
+      await user.assignDefaultUserPermissions();
     }
 
     // Reload with relations
@@ -174,6 +173,7 @@ export class UsersV1Controller {
         firstName: createdUser!.firstName,
         lastName: createdUser!.lastName,
         email: createdUser!.email,
+        isAdmin: createdUser!.isAdmin,
         roles: createdUser!.roles.map(role => ({
           id: role.id,
           name: role.name,
@@ -187,17 +187,17 @@ export class UsersV1Controller {
   }
 
   @Put('/:id')
-  @UseBefore(...auth.permission('users.update'))
+  @UseBefore(...auth.admin())
   async updateUser(@Param('id') id: number, @Body() body: UpdateUserRequest, @Req() req: Request) {
     const user = await User.findOne({ where: { id } });
     if (!user) {
       throw new Error('User not found');
     }
 
-    // Prevent non-admin users from updating other users
-    const currentUser = req.user as User;
-    const isAdmin = await currentUser.hasRole('admin');
-    if (!isAdmin && currentUser.id !== user.id) {
+    // Prevent users without permission from updating other users
+    const currentUser = req.user as any; // JWT payload
+    const canUpdateOthers = currentUser.permissions?.includes('users.update');
+    if (!canUpdateOthers && currentUser.id !== user.id) {
       throw new Error('You can only update your own profile');
     }
 
@@ -219,8 +219,8 @@ export class UsersV1Controller {
 
     await user.save();
 
-    // Update roles if provided and user has permission
-    if (body.roles && isAdmin) {
+    // Update roles if provided
+    if (body.roles) {
       await user.syncRoles(body.roles);
     }
 
@@ -236,6 +236,7 @@ export class UsersV1Controller {
         firstName: updatedUser!.firstName,
         lastName: updatedUser!.lastName,
         email: updatedUser!.email,
+        isAdmin: updatedUser!.isAdmin,
         roles: updatedUser!.roles.map(role => ({
           id: role.id,
           name: role.name,
@@ -248,27 +249,22 @@ export class UsersV1Controller {
   }
 
   @Delete('/:id')
-  @UseBefore(...auth.permission('users.delete'))
+  @UseBefore(...auth.admin())
   async deleteUser(@Param('id') id: number, @Req() req: Request) {
     const user = await User.findOne({ where: { id } });
     if (!user) {
       throw new Error('User not found');
     }
 
-    const currentUser = req.user as User;
+    const currentUser = req.user as any; // JWT payload
 
     // Prevent self-deletion
     if (currentUser.id === user.id) {
       throw new Error('You cannot delete your own account');
     }
 
-    // Prevent deletion of admin users by non-super-admin
-    const userIsAdmin = await user.hasRole('admin');
-    const currentUserIsAdmin = await currentUser.hasRole('admin');
-
-    if (userIsAdmin && !currentUserIsAdmin) {
-      throw new Error('Only administrators can delete admin users');
-    }
+    // For now, simplify admin check using permissions - anyone with users.delete can delete users
+    // More complex role-based restrictions can be implemented later if needed
 
     await user.remove();
 
@@ -278,7 +274,7 @@ export class UsersV1Controller {
   }
 
   @Post('/:id/roles')
-  @UseBefore(...auth.permission('users.update'))
+  @UseBefore(...auth.admin())
   async assignRoles(@Param('id') id: number, @Body() body: AssignRolesRequest) {
     const user = await User.findOne({ where: { id } });
     if (!user) {

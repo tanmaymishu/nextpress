@@ -59,10 +59,20 @@ export default class AuthServiceProvider extends ServiceProvider {
         return done(null, false);
       }
 
+      // Verify user still exists in database
       const user = await User.findOneBy({ id: payload.sub });
 
       if (user) {
-        return done(null, user);
+        // 🚀 PERFORMANCE: Return JWT payload with permissions instead of just user entity
+        return done(null, {
+          id: user.id,
+          sub: payload.sub,
+          permissions: payload.permissions || [],
+          roles: payload.roles || [],
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email
+        });
       }
       return done(null, false);
     });

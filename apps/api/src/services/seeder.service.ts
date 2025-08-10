@@ -22,37 +22,41 @@ export class SeederService {
   }
 
   /**
-   * Create a default admin user with all permissions
+   * Create a default admin user with all permissions (only if no users exist)
    */
   async seedDefaultAdmin(): Promise<void> {
     try {
-      let admin = await User.findOne({
-        where: { email: 'admin@nextpress.test' },
-        relations: ['permissions']
-      });
-
-      if (!admin) {
-        logger.info('Creating default admin user...');
+      const userCount = await User.count();
+      
+      if (userCount === 0) {
+        logger.info('No users found. Creating default admin user...');
 
         const bcrypt = require('bcrypt');
         const hashedPassword = await bcrypt.hash('password', 10);
 
-        admin = new User();
+        const admin = new User();
         admin.firstName = 'Admin';
         admin.lastName = 'User';
         admin.email = 'admin@nextpress.test';
         admin.password = hashedPassword;
         await admin.save();
 
+        // First user automatically gets all permissions via isFirstUser logic
+        await admin.assignAllPermissions();
+        
         logger.info('Default admin user created: admin@nextpress.test / password');
+        logger.info('Admin user has been assigned all permissions as first user');
         logger.warn('IMPORTANT: Change the default admin credentials in production!');
       } else {
-        logger.info('Admin user already exists, ensuring permissions are assigned...');
+        logger.info('Users already exist. Skipping admin creation...');
+        
+        // Ensure first user has admin permissions
+        const firstUser = await User.findFirstUser();
+        if (firstUser && !(await firstUser.isAdmin())) {
+          await firstUser.assignAllPermissions();
+          logger.info('Ensured first user has admin permissions');
+        }
       }
-
-      // Always assign all permissions directly to the admin user
-      await admin.assignAllPermissions();
-      logger.info('Admin user has been assigned all permissions directly');
       
     } catch (error) {
       logger.error('Error seeding default admin:', error);

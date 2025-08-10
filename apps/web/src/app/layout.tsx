@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import QueryProvider from "@/components/providers/QueryProvider";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "NextPress - Web App",
@@ -19,6 +20,7 @@ export default function RootLayout({
         <QueryProvider>
           <AuthProvider>
             {children}
+            <Toaster position="top-right" richColors />
           </AuthProvider>
         </QueryProvider>
       </body>

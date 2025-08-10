@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
-import { CustomLogger } from '@/database/sql/custom-logger';
+// import { CustomLogger } from '@/database/sql/custom-logger';
 if (process.env.NODE_ENV == 'test') {
   dotenv.config({ path: '.env.test' });
 } else {
@@ -16,8 +16,8 @@ export const AppDataSource = new DataSource({
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
-  logger: new CustomLogger(),
-  logging: true,
+  // logger: new CustomLogger(),
+  logging: process.env.NODE_ENV === 'development',
   entities: [
     `./${
       process.env.NODE_ENV == 'production' ? 'dist' : 'src'

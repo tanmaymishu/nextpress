@@ -11,17 +11,34 @@ async function startServer() {
     // Ensure database is initialized
     if (!AppDataSource.isInitialized) {
       await AppDataSource.initialize();
-      console.log('Data Source has been initialized!');
+      console.log('Connected to DataSource!');
     }
-    
-    // Run database seeders after DB is initialized
-    const seederService = Container.get(SeederService);
-    await seederService.runAllSeeders();
-    
+
+    // Database seeders can be run manually with 'pnpm seed'
+
     // Boot the server
-    app.listen(port, () => {
+    const server = app.listen(port, () => {
       console.log(`Listening on port ${port}...`);
     });
+
+    // Graceful shutdown handling
+    process.on('SIGTERM', gracefulShutdown);
+    process.on('SIGINT', gracefulShutdown);
+
+    async function gracefulShutdown() {
+      console.log('\nReceived shutdown signal, closing server gracefully...');
+      
+      server.close(async () => {
+        console.log('HTTP server closed.');
+        
+        if (AppDataSource.isInitialized) {
+          await AppDataSource.destroy();
+          console.log('Database connection closed.');
+        }
+        
+        process.exit(0);
+      });
+    }
   } catch (error) {
     console.error('Failed to start server:', error);
     process.exit(1);

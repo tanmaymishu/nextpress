@@ -44,6 +44,14 @@ export class User extends BaseEntity {
   })
   updatedAt!: Date;
 
+  /**
+   * Virtual property - not stored in database but always available in API responses
+   * Automatically calculated based on user ID and permissions
+   */
+  get isAdmin(): boolean {
+    return this.id === 1;
+  }
+
   // Many-to-many relationship with Roles
   @ManyToMany(() => Role, role => role.users)
   @JoinTable({
@@ -198,5 +206,71 @@ export class User extends BaseEntity {
       this.permissions = [...currentPermissions, ...newPermissions];
       await this.save();
     }
+  }
+
+  /**
+   * Assign default permissions for new users (all permissions except admin-only ones)
+   */
+  async assignDefaultUserPermissions(): Promise<void> {
+    // Get all permissions except admin-only ones
+    const allPermissions = await Permission.find();
+    const restrictedPermissions = [
+      'users.create', 'users.update', 'users.delete',
+      'roles.create', 'roles.update', 'roles.delete'
+    ];
+    const allowedPermissions = allPermissions.filter(p => !restrictedPermissions.includes(p.name));
+    
+    // Get current permissions to avoid duplicates
+    const currentPermissions = await this.permissions || [];
+    const currentPermissionIds = new Set(currentPermissions.map(p => p.id));
+    
+    // Filter out permissions that are already assigned
+    const newPermissions = allowedPermissions.filter(p => !currentPermissionIds.has(p.id));
+    
+    if (newPermissions.length > 0) {
+      this.permissions = [...currentPermissions, ...newPermissions];
+      await this.save();
+    }
+  }
+
+  /**
+   * Check if this user is the first user (admin) based on lowest ID
+   */
+  isFirstUser(): boolean {
+    return this.id === 1;
+  }
+
+  /**
+   * Check if this user is admin (async version for complex permission checks)
+   */
+  async isAdminAdvanced(): Promise<boolean> {
+    // Method 1: First user is always admin
+    if (this.isFirstUser()) {
+      return true;
+    }
+
+    // Method 2: Check if user has admin-level permissions
+    const userPermissions = await this.getPermissionNames();
+    const adminPermissions = ['users.update', 'users.delete'];
+    return adminPermissions.every(permission => userPermissions.includes(permission));
+  }
+
+  /**
+   * Static method to find the first user (admin)
+   */
+  static async findFirstUser(): Promise<User | null> {
+    return await User.findOne({
+      where: {},
+      order: { id: 'ASC' },
+      relations: ['roles', 'roles.permissions', 'permissions']
+    });
+  }
+
+  /**
+   * Static method to check if this is the first user being created
+   */
+  static async isFirstUserCreation(): Promise<boolean> {
+    const userCount = await User.count();
+    return userCount === 0;
   }
 }

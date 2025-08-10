@@ -3,6 +3,7 @@ export interface ApiUser {
   firstName: string;
   lastName: string;
   email: string;
+  isAdmin: boolean;
   createdAt: string;
   updatedAt: string;
 }

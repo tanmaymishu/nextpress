@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useUsers, useCreateUser, useUpdateUser, useDeleteUser } from '@/hooks/api/useUsers';
 import { useRoles } from '@/hooks/api/useRoles';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -31,11 +32,13 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { User, Role } from '@repo/shared';
 import { Pencil, Trash2, Plus, UserPlus } from 'lucide-react';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 export default function UsersManagement() {
+  const { user: currentUser } = useAuth();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -84,18 +87,11 @@ export default function UsersManagement() {
         password: formData.password,
         roleIds: formData.roleIds,
       });
-      toast({
-        title: 'Success',
-        description: 'User created successfully',
-      });
+      toast.success('User created successfully');
       setIsCreateOpen(false);
       resetForm();
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to create user',
-        variant: 'destructive',
-      });
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to create user');
     }
   };
 
@@ -120,39 +116,21 @@ export default function UsersManagement() {
         id: selectedUser.id,
         ...updateData,
       });
-      toast({
-        title: 'Success',
-        description: 'User updated successfully',
-      });
+      toast.success('User updated successfully');
       setIsEditOpen(false);
       setSelectedUser(null);
       resetForm();
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to update user',
-        variant: 'destructive',
-      });
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to update user');
     }
   };
 
   const handleDeleteUser = async (user: User) => {
-    if (!confirm(`Are you sure you want to delete user "${user.firstName} ${user.lastName}"?`)) {
-      return;
-    }
-
     try {
       await deleteUserMutation.mutateAsync(user.id);
-      toast({
-        title: 'Success',
-        description: 'User deleted successfully',
-      });
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to delete user',
-        variant: 'destructive',
-      });
+      toast.success('User deleted successfully');
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to delete user');
     }
   };
 
@@ -309,7 +287,14 @@ export default function UsersManagement() {
             {users.map((user) => (
               <TableRow key={user.id}>
                 <TableCell className="font-medium">
-                  {user.firstName} {user.lastName}
+                  <div className="flex items-center gap-2">
+                    {user.firstName} {user.lastName}
+                    {user.isAdmin && (
+                      <Badge variant="default" className="text-xs">
+                        Admin
+                      </Badge>
+                    )}
+                  </div>
                 </TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>
@@ -326,21 +311,68 @@ export default function UsersManagement() {
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end space-x-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => openEditDialog(user)}
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDeleteUser(user)}
-                      className="text-destructive hover:text-destructive"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    {/* Show edit button when:
+                        - Current user is admin (can edit anyone)
+                        - OR current user is editing themselves (non-admin can edit own profile)
+                    */}
+                    {(currentUser?.isAdmin || currentUser?.id === user.id.toString()) && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => openEditDialog(user)}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    )}
+                    
+                    {/* Show delete button only when:
+                        - Current user is admin
+                        - AND target user is not admin (admin can't delete other admins)
+                        - AND target user is not themselves (admin can't delete themselves)
+                    */}
+                    {currentUser?.isAdmin && !user.isAdmin && currentUser?.id !== user.id.toString() && (
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-80">
+                          <div className="grid gap-4">
+                            <div className="space-y-2">
+                              <h4 className="font-medium leading-none">Delete User</h4>
+                              <p className="text-sm text-muted-foreground">
+                                Are you sure you want to delete user &ldquo;{user.firstName} {user.lastName}&rdquo;? This action cannot be undone.
+                              </p>
+                            </div>
+                            <div className="flex gap-2 justify-end">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  // Close the popover by clicking outside or programmatically
+                                  document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+                                }}
+                              >
+                                Cancel
+                              </Button>
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => handleDeleteUser(user)}
+                                disabled={deleteUserMutation.isPending}
+                              >
+                                {deleteUserMutation.isPending ? 'Deleting...' : 'Delete'}
+                              </Button>
+                            </div>
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+                    )}
                   </div>
                 </TableCell>
               </TableRow>

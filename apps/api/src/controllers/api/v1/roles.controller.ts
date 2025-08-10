@@ -17,6 +17,7 @@ import { Role } from '../../../database/sql/entities/Role';
 import { Permission } from '../../../database/sql/entities/Permission';
 import auth from '../../../middleware/auth.middleware';
 import { requirePermission } from '../../../middleware/permission.middleware';
+import { PermissionCacheService } from '../../../services/permission-cache.service';
 
 interface CreateRoleRequest {
   name: string;
@@ -37,6 +38,7 @@ interface AssignPermissionsRequest {
 @Service()
 @JsonController('/api/v1/roles')
 export class RolesV1Controller {
+  private cacheService = Container.get(PermissionCacheService);
 
   @Get('/')
   @UseBefore(...auth.permission('roles.read'))
@@ -117,7 +119,7 @@ export class RolesV1Controller {
   }
 
   @Post('/')
-  @UseBefore(...auth.permission('roles.create'))
+  @UseBefore(...auth.admin())
   async createRole(@Body() body: CreateRoleRequest) {
     const existingRole = await Role.findOne({ where: { name: body.name } });
     if (existingRole) {
@@ -148,7 +150,7 @@ export class RolesV1Controller {
   }
 
   @Put('/:id')
-  @UseBefore(...auth.permission('roles.update'))
+  @UseBefore(...auth.admin())
   async updateRole(@Param('id') id: number, @Body() body: UpdateRoleRequest) {
     const role = await Role.findOne({ where: { id } });
     if (!role) {
@@ -173,6 +175,8 @@ export class RolesV1Controller {
     // Update permissions if provided
     if (body.permissions) {
       await role.syncPermissions(body.permissions);
+      // 🚀 PERFORMANCE: Invalidate cache for users with this role
+      await this.cacheService.invalidateUsersWithRole(role.id);
     }
 
     return {
@@ -187,7 +191,7 @@ export class RolesV1Controller {
   }
 
   @Delete('/:id')
-  @UseBefore(...auth.permission('roles.delete'))
+  @UseBefore(...auth.admin())
   async deleteRole(@Param('id') id: number) {
     const role = await Role.findOne({
       where: { id },
@@ -224,6 +228,9 @@ export class RolesV1Controller {
     }
 
     await role.syncPermissions(body.permissions);
+    
+    // 🚀 PERFORMANCE: Invalidate cache for users with this role
+    await this.cacheService.invalidateUsersWithRole(role.id);
 
     return {
       message: 'Permissions assigned successfully'

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import passport from 'passport';
-import { requirePermission } from './permission.middleware';
+import { requirePermission, requireAdmin } from './permission.middleware';
 
 const HOME = '/dashboard';
 
@@ -24,6 +24,14 @@ const auth = {
     return [
       passport.authenticate('jwt', { session: false }),
       requirePermission(permission)
+    ];
+  },
+
+  // Combined auth and admin middleware
+  admin: () => {
+    return [
+      passport.authenticate('jwt', { session: false }),
+      requireAdmin()
     ];
   }
 };
