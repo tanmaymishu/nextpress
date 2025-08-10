@@ -77,24 +77,20 @@ export class User extends BaseEntity {
   }
 
   async hasPermission(permissionName: string): Promise<boolean> {
-    // Check direct permissions first
-    const directPermissions = await this.permissions;
-    if (directPermissions && directPermissions.some(permission => permission.name === permissionName)) {
-      return true;
-    }
-
-    // Check role-based permissions
-    const roles = await this.roles;
-    if (roles) {
-      for (const role of roles) {
-        const permissions = await role.permissions;
-        if (permissions && permissions.some(permission => permission.name === permissionName)) {
-          return true;
-        }
-      }
-    }
-    
-    return false;
+    // Use query builder to check both direct permissions and role-based permissions
+    const count = await User.getRepository()
+      .createQueryBuilder("user")
+      .leftJoin("user.permissions", "directPermission")
+      .leftJoin("user.roles", "role") 
+      .leftJoin("role.permissions", "rolePermission")
+      .where("user.id = :userId", { userId: this.id })
+      .andWhere(
+        "(directPermission.name = :permissionName OR rolePermission.name = :permissionName)",
+        { permissionName }
+      )
+      .getCount();
+      
+    return count > 0;
   }
 
   async hasAnyRole(roleNames: string[]): Promise<boolean> {
@@ -147,27 +143,41 @@ export class User extends BaseEntity {
   }
 
   async getPermissionNames(): Promise<string[]> {
-    const allPermissions: string[] = [];
-
     // Get direct permissions
-    const directPermissions = await this.permissions;
-    if (directPermissions) {
-      allPermissions.push(...directPermissions.map(permission => permission.name));
-    }
+    const directPermissions = await User.getRepository()
+      .createQueryBuilder("user")
+      .leftJoin("user.permissions", "permission")
+      .select("permission.name", "name")
+      .where("user.id = :userId", { userId: this.id })
+      .andWhere("permission.name IS NOT NULL")
+      .getRawMany();
 
     // Get role-based permissions
-    const roles = await this.roles;
-    if (roles) {
-      for (const role of roles) {
-        const permissions = await role.permissions;
-        if (permissions) {
-          allPermissions.push(...permissions.map(permission => permission.name));
-        }
-      }
-    }
+    const rolePermissions = await User.getRepository()
+      .createQueryBuilder("user")
+      .leftJoin("user.roles", "role")
+      .leftJoin("role.permissions", "permission")
+      .select("permission.name", "name")
+      .where("user.id = :userId", { userId: this.id })
+      .andWhere("permission.name IS NOT NULL")
+      .getRawMany();
 
-    // Remove duplicates
-    return [...new Set(allPermissions)];
+    // Combine and deduplicate permission names
+    const allPermissionNames = new Set<string>();
+    
+    directPermissions.forEach(row => {
+      if (row.name) {
+        allPermissionNames.add(row.name);
+      }
+    });
+
+    rolePermissions.forEach(row => {
+      if (row.name) {
+        allPermissionNames.add(row.name);
+      }
+    });
+
+    return Array.from(allPermissionNames);
   }
 
   // Direct permission management methods

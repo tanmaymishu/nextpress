@@ -50,8 +50,14 @@ export class Role extends BaseEntity {
 
   // Helper methods
   async hasPermission(permissionName: string): Promise<boolean> {
-    const permissions = await this.permissions;
-    return permissions.some(permission => permission.name === permissionName);
+    const count = await Role.getRepository()
+      .createQueryBuilder("role")
+      .innerJoin("role.permissions", "permission")
+      .where("role.id = :roleId", { roleId: this.id })
+      .andWhere("permission.name = :permissionName", { permissionName })
+      .getCount();
+      
+    return count > 0;
   }
 
   async givePermissionTo(permissionName: string): Promise<void> {
@@ -60,22 +66,41 @@ export class Role extends BaseEntity {
       throw new Error(`Permission '${permissionName}' not found`);
     }
 
-    if (!this.permissions) {
-      this.permissions = [];
-    }
+    // Load the role with its permissions relationship
+    const roleWithPermissions = await Role.findOne({
+      where: { id: this.id },
+      relations: ['permissions']
+    });
     
-    const hasPermission = this.permissions.some(p => p.id === permission.id);
+    if (!roleWithPermissions) {
+      throw new Error('Role not found');
+    }
+
+    // Check if permission is already assigned
+    const hasPermission = roleWithPermissions.permissions.some(p => p.id === permission.id);
     if (!hasPermission) {
-      this.permissions.push(permission);
-      await this.save();
+      roleWithPermissions.permissions.push(permission);
+      await roleWithPermissions.save();
     }
   }
 
   async removePermission(permissionName: string): Promise<void> {
-    if (!this.permissions) return;
+    // Load the role with its permissions relationship
+    const roleWithPermissions = await Role.findOne({
+      where: { id: this.id },
+      relations: ['permissions']
+    });
+    
+    if (!roleWithPermissions || !roleWithPermissions.permissions) {
+      return;
+    }
 
-    this.permissions = this.permissions.filter(permission => permission.name !== permissionName);
-    await this.save();
+    // Filter out the permission to remove
+    roleWithPermissions.permissions = roleWithPermissions.permissions.filter(
+      permission => permission.name !== permissionName
+    );
+    
+    await roleWithPermissions.save();
   }
 
   async syncPermissions(permissionNames: string[]): Promise<void> {

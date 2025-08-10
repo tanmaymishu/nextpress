@@ -1,6 +1,5 @@
 import { Service } from 'typedi';
 import { Permission, STATIC_PERMISSIONS } from '@/database/sql/entities/Permission';
-import { Role } from '@/database/sql/entities/Role';
 import { User } from '@/database/sql/entities/User';
 import logger from '../util/logger';
 
@@ -27,7 +26,7 @@ export class SeederService {
   async seedDefaultAdmin(): Promise<void> {
     try {
       const userCount = await User.count();
-      
+
       if (userCount === 0) {
         logger.info('No users found. Creating default admin user...');
 
@@ -43,21 +42,21 @@ export class SeederService {
 
         // First user automatically gets all permissions via isFirstUser logic
         await admin.assignAllPermissions();
-        
+
         logger.info('Default admin user created: admin@nextpress.test / password');
         logger.info('Admin user has been assigned all permissions as first user');
         logger.warn('IMPORTANT: Change the default admin credentials in production!');
       } else {
         logger.info('Users already exist. Skipping admin creation...');
-        
+
         // Ensure first user has admin permissions
         const firstUser = await User.findFirstUser();
-        if (firstUser && !(await firstUser.isAdmin())) {
+        if (firstUser && !(firstUser.isAdmin)) {
           await firstUser.assignAllPermissions();
           logger.info('Ensured first user has admin permissions');
         }
       }
-      
+
     } catch (error) {
       logger.error('Error seeding default admin:', error);
       throw error;

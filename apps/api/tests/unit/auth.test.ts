@@ -1,6 +1,7 @@
-import { User } from '@/database/sql/entities/user.entity';
+import { User } from '../../src/database/sql/entities/User';
 import Container from 'typedi';
 import AuthService from '../../src/services/auth.service';
+import { describe, it, expect } from '@jest/globals'
 
 describe('auth', () => {
   describe('auth service', () => {

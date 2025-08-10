@@ -37,10 +37,22 @@ import DatabaseServiceProvider from '@/providers/database-service.provider';
 const providers = [AppServiceProvider, DatabaseServiceProvider, AuthServiceProvider];
 providers.forEach((provider) => new provider().register());
 
-const redisClient = new IORedis({
-  port: parseInt(process.env.REDIS_PORT || '6379'),
-  host: process.env.REDIS_HOST || 'localhost'
-});
+// Mock Redis client for tests
+class MockRedisClient {
+  async get(key: string) { return null; }
+  async set(key: string, value: any) { return 'OK'; }
+  async del(key: string) { return 1; }
+  async disconnect() { return Promise.resolve(); }
+  on(event: string, callback: any) { return this; }
+}
+
+const redisClient = process.env.NODE_ENV === 'test' 
+  ? new MockRedisClient() as any
+  : new IORedis({
+      port: parseInt(process.env.REDIS_PORT || '6379'),
+      host: process.env.REDIS_HOST || 'localhost'
+    });
+
 const RedisStore = connectRedis(session);
 
 // Create an express app.
@@ -53,20 +65,28 @@ app.use(helmet());
 app.use(cookieParser());
 
 //Configure session middleware
-app.use(
-  session({
-    store: new RedisStore({ client: redisClient }),
-    secret: process.env.JWT_SECRET as string,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      httpOnly: true, // if true prevent client side JS from reading the cookie
-      secure: process.env.NODE_ENV === 'production', // if true only transmit cookie over https
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // required for cross-origin cookies
-      maxAge: 1000 * 60 * 60 * 24 // session max age in miliseconds
+// Configure session store - use memory store for tests, Redis for production
+const sessionConfig = process.env.NODE_ENV === 'test' 
+  ? {
+      secret: process.env.JWT_SECRET as string,
+      resave: false,
+      saveUninitialized: false,
+      cookie: { httpOnly: true, secure: false, sameSite: 'lax' as const, maxAge: 1000 * 60 * 60 * 24 }
     }
-  })
-);
+  : {
+      store: new RedisStore({ client: redisClient }),
+      secret: process.env.JWT_SECRET as string,
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' as const : 'lax' as const,
+        maxAge: 1000 * 60 * 60 * 24
+      }
+    };
+
+app.use(session(sessionConfig));
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -144,15 +164,18 @@ app.use('/api/v1/login', authLimiter);
 app.use('/api/v1/register', authLimiter);
 
 // Set up queue monitoring route with BullBoard v6
-const serverAdapter = new ExpressAdapter();
-serverAdapter.setBasePath('/admin/queues');
+// Only setup Bull Board queue dashboard in non-test environments
+if (process.env.NODE_ENV !== 'test') {
+  const serverAdapter = new ExpressAdapter();
+  serverAdapter.setBasePath('/admin/queues');
 
-createBullBoard({
-  queues: [new BullMQAdapter(mailQueue)],
-  serverAdapter: serverAdapter
-});
+  createBullBoard({
+    queues: [new BullMQAdapter(mailQueue)],
+    serverAdapter: serverAdapter
+  });
 
-app.use('/admin/queues', serverAdapter.getRouter());
+  app.use('/admin/queues', serverAdapter.getRouter());
+}
 
 // Add views
 app.set('views', path.join(__dirname, './views'));

@@ -71,8 +71,14 @@ export class Permission extends BaseEntity {
 
   // Helper method
   async belongsToRole(roleName: string): Promise<boolean> {
-    const roles = await this.roles;
-    return roles.some(role => role.name === roleName);
+    const count = await Permission.getRepository()
+      .createQueryBuilder("permission")
+      .innerJoin("permission.roles", "role")
+      .where("permission.id = :permissionId", { permissionId: this.id })
+      .andWhere("role.name = :roleName", { roleName })
+      .getCount();
+      
+    return count > 0;
   }
 
   // Static method to seed permissions
