@@ -9,7 +9,6 @@
     },
     "rootDirs": ["./src", "./tests"],
     "typeRoots": ["./src/types", "../../node_modules/@types"],
-    "types": ["jest", "node"],
     "isolatedModules": true,
   },
   "include": ["src/**/*", "tests/**/*"],
