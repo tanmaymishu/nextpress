@@ -7,17 +7,13 @@ import {
   Param,
   Body,
   UseBefore,
-  Req,
-  Res,
   QueryParam
 } from 'routing-controllers';
-import { Request, Response } from 'express';
 import { Container, Service } from 'typedi';
-import { Role } from '../../../database/sql/entities/Role';
-import { Permission } from '../../../database/sql/entities/Permission';
-import auth from '../../../middleware/auth.middleware';
-import { requirePermission } from '../../../middleware/permission.middleware';
-import { PermissionCacheService } from '../../../services/permission-cache.service';
+import { Role } from '@/database/sql/entities/Role';
+import { Permission } from '@/database/sql/entities/Permission';
+import auth from '@/middleware/auth.middleware';
+import { PermissionCacheService } from '@/services/permission-cache.service';
 
 interface CreateRoleRequest {
   name: string;
@@ -228,7 +224,7 @@ export class RolesV1Controller {
     }
 
     await role.syncPermissions(body.permissions);
-    
+
     // 🚀 PERFORMANCE: Invalidate cache for users with this role
     await this.cacheService.invalidateUsersWithRole(role.id);
 

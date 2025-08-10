@@ -8,6 +8,8 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
+    "dev:sync": "node scripts/dev-sync.js",
+    "dev:simple": "node scripts/dev-simple.js",
     "test": "turbo run test",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
