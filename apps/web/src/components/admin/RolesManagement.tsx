@@ -367,7 +367,7 @@ export default function RolesManagement() {
                           <div className="space-y-2">
                             <h4 className="font-medium leading-none">Delete Role</h4>
                             <p className="text-sm text-muted-foreground">
-                              Are you sure you want to delete the role "{role.name}"? This action cannot be undone.
+                              Are you sure you want to delete the role {role.name}? This action cannot be undone.
                             </p>
                           </div>
                           <div className="flex gap-2 justify-end">
