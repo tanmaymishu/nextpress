@@ -12,7 +12,7 @@ import {
 } from 'routing-controllers';
 import { Service } from 'typedi';
 import { Request } from 'express';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { User } from '@/database/sql/entities/User';
 import { Role } from '@/database/sql/entities/Role';
 import auth from '@/middleware/auth.middleware';

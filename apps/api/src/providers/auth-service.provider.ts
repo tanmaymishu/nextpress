@@ -2,7 +2,7 @@ import ServiceProvider from './service-provider';
 import PassportJWT from 'passport-jwt';
 import PassportLocal from 'passport-local';
 import passport from 'passport';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { Request } from 'express';
 import { User } from '@/database/sql/entities/User';
 
