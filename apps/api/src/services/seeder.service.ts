@@ -45,7 +45,7 @@ export class SeederService {
 
         logger.info('Default admin user created: admin@nextpress.test / password');
         logger.info('Admin user has been assigned all permissions as first user');
-        logger.warn('IMPORTANT: Change the default admin credentials in production!');
+        logger.info('IMPORTANT: Change the default admin credentials in production!');
       } else {
         logger.info('Users already exist. Skipping admin creation...');
 

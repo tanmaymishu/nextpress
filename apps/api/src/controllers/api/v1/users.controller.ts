@@ -187,7 +187,7 @@ export class UsersV1Controller {
   }
 
   @Put('/:id')
-  @UseBefore(...auth.admin())
+  @UseBefore(auth.api)
   async updateUser(@Param('id') id: number, @Body() body: UpdateUserRequest, @Req() req: Request) {
     const user = await User.findOne({ where: { id } });
     if (!user) {
@@ -196,8 +196,9 @@ export class UsersV1Controller {
 
     // Prevent users without permission from updating other users
     const currentUser = req.user as any; // JWT payload
+    const currentUserId = currentUser.id || currentUser.sub; // Handle both id and sub from JWT
     const canUpdateOthers = currentUser.permissions?.includes('users.update');
-    if (!canUpdateOthers && currentUser.id !== user.id) {
+    if (!canUpdateOthers && currentUserId !== user.id) {
       throw new Error('You can only update your own profile');
     }
 
@@ -257,9 +258,10 @@ export class UsersV1Controller {
     }
 
     const currentUser = req.user as any; // JWT payload
+    const currentUserId = currentUser.id || currentUser.sub; // Handle both id and sub from JWT
 
     // Prevent self-deletion
-    if (currentUser.id === user.id) {
+    if (currentUserId === user.id) {
       throw new Error('You cannot delete your own account');
     }
 

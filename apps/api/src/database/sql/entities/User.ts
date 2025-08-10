@@ -138,8 +138,16 @@ export class User extends BaseEntity {
   }
 
   async getRoleNames(): Promise<string[]> {
-    const roles = await this.roles;
-    return roles.map(role => role.name);
+    const userWithRoles = await User.findOne({
+      where: { id: this.id },
+      relations: ['roles']
+    });
+    
+    if (!userWithRoles || !userWithRoles.roles) {
+      return [];
+    }
+    
+    return userWithRoles.roles.map(role => role.name);
   }
 
   async getPermissionNames(): Promise<string[]> {
@@ -187,10 +195,20 @@ export class User extends BaseEntity {
       throw new Error(`Permission '${permissionName}' not found`);
     }
 
-    const currentPermissions = await this.permissions;
-    if (!currentPermissions.some(p => p.id === permission.id)) {
-      currentPermissions.push(permission);
-      await this.save();
+    // Load the user with its permissions relationship
+    const userWithPermissions = await User.findOne({
+      where: { id: this.id },
+      relations: ['permissions']
+    });
+    
+    if (!userWithPermissions) {
+      throw new Error('User not found');
+    }
+
+    // Check if permission is already assigned
+    if (!userWithPermissions.permissions.some(p => p.id === permission.id)) {
+      userWithPermissions.permissions.push(permission);
+      await userWithPermissions.save();
     }
   }
 

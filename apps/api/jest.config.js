@@ -53,5 +53,8 @@ module.exports = {
   verbose: true,
 
   // Run tests serially to avoid database connection issues (CRITICAL for DB tests)
-  maxWorkers: 1
+  maxWorkers: 1,
+
+  // Suppress console errors/warnings during tests for cleaner output
+  setupFilesAfterEnv: ['<rootDir>/tests/setupTests.js']
 };
