@@ -64,19 +64,12 @@ const format = winston.format.combine(
 const transports = [];
 
 if (process.env.NODE_ENV === 'test') {
-  // Create a custom null transport that completely suppresses output
-  class NullTransport extends winston.transports.Console {
-    log(info: any, callback: any) {
-      // Do nothing - suppress all output
-      if (callback) {
-        setImmediate(callback);
-        return true;
-      }
-      return true;
-    }
-  }
-  
-  transports.push(new NullTransport());
+  // For tests, add a console transport with silent: true to suppress all output
+  transports.push(
+    new winston.transports.Console({
+      silent: true
+    })
+  );
 } else {
   // Normal transports for development/production
   transports.push(

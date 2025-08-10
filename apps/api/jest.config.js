@@ -54,9 +54,8 @@ module.exports = {
   // Run tests serially to avoid database connection issues (CRITICAL for DB tests)
   maxWorkers: 1,
 
-  // Suppress console errors/warnings during tests for cleaner output
+  // Set up mocks for tests
   setupFilesAfterEnv: [
-    '<rootDir>/tests/setupTests.js',
     '<rootDir>/tests/setupMocks.js'
   ],
   moduleDirectories: ['node_modules', '<rootDir>/node_modules'],
