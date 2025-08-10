@@ -8,7 +8,7 @@
     "build": "tsc && cp -R src/views dist/views",
     "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/index.ts",
     "test": "export NODE_ENV=test && jest --runInBand",
-    "start": "export NODE_ENV=production && npm rebuild sqlite3 && tsc && export NODE_ENV=development && pnpm migrate && export NODE_ENV=production && TS_NODE_BASEURL=./dist node -r tsconfig-paths/register dist/index.js",
+    "start": "export NODE_ENV=production && npm rebuild sqlite3 && tsc && export NODE_ENV=development && pnpm migrate && pnpm seed && export NODE_ENV=production && TS_NODE_BASEURL=./dist node -r tsconfig-paths/register dist/index.js",
     "fmt": "prettier --config .prettierrc 'src/**/*.ts' 'tests/**/*.ts' --write",
     "entity:make": "cd src/database/sql/entities/ && typeorm-ts-node-commonjs entity:create",
     "migrate:make": "cd src/database/sql/migrations/ && typeorm-ts-node-commonjs migration:create",
