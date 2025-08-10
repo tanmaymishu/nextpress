@@ -4,6 +4,7 @@ import { Controller, Post, Req, Res, UseBefore } from 'routing-controllers';
 import { Service } from 'typedi';
 import validate from '@/middleware/validation.middleware';
 import AuthService from '@/services/auth.service';
+import logger from '@/util/logger';
 
 @Controller('/api/v1')
 @Service()
@@ -26,7 +27,7 @@ export class LoginController {
         return res.json({ user });
       })
       .catch((err) => {
-        console.log(err);
+        logger.debug('Login attempt failed:', err.message);
         return res.status(422).json({ message: 'Invalid username or password' });
       });
   }
@@ -44,7 +45,7 @@ export class LoginController {
     if (req.session) {
       req.session.destroy((err) => {
         if (err) {
-          console.log('Session destruction error:', err);
+          logger.error('Session destruction error:', err);
         }
       });
     }

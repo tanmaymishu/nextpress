@@ -1,6 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "pipeline": {
+  "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**", ".next/**", "build/**"]
@@ -21,6 +21,12 @@
       "dependsOn": ["^build"]
     },
     "clean": {
+      "cache": false
+    },
+    "migrate:fresh": {
+      "cache": false
+    },
+    "seed": {
       "cache": false
     },
     "migrate": {

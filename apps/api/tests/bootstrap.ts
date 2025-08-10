@@ -1,7 +1,7 @@
-import '../src/util/helpers';
 import AuthService from '../src/services/auth.service';
+import { SeederService } from '../src/services/seeder.service';
 import Container from 'typedi';
-import { AppDataSource } from '@/database/sql/data-source';
+import { AppDataSource } from '../src/database/sql/data-source';
 
 export async function initDB() {
   // Initialize if not already done (reuse existing connection)
@@ -9,18 +9,20 @@ export async function initDB() {
     await AppDataSource.initialize();
   }
 
-  // Drop all tables and recreate from migrations for clean test state
+  // Drop all tables and recreate from entity definitions for clean test state
   await AppDataSource.dropDatabase();
-  await AppDataSource.synchronize();
-
-  // Run all migrations to ensure proper schema
   await AppDataSource.runMigrations({
-    transaction: 'none'
+    transaction: 'none',
   });
 }
 
-export async function refreshDB() {
+export async function refreshDB(seed: boolean = false) {
   await initDB();
+  if (seed) {
+    const seederService = new SeederService();
+    await seederService.seedPermissions();
+    await seederService.seedDefaultAdmin();
+  }
 }
 
 export async function initUser() {

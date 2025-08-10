@@ -17,7 +17,11 @@ export default class AuthServiceProvider extends ServiceProvider {
     };
     const LocalStrategy = PassportLocal.Strategy;
     const localStrategy = new LocalStrategy(customFields, async (username, password, done) => {
-      const user = await User.findOneBy({ email: username });
+      const user = await User.createQueryBuilder('user')
+        .where('user.email = :email', { email: username })
+        .addSelect('user.password')
+        .getOne();
+
       if (user && bcrypt.compareSync(password, user.password)) {
         return done(null, user);
       }
@@ -29,7 +33,7 @@ export default class AuthServiceProvider extends ServiceProvider {
     const opts = {
       jwtFromRequest: function (req: Request) {
         let token = null;
-        
+
         // First, check Authorization header (Bearer token)
         if (req && req.headers && req.headers.authorization) {
           const authHeader = req.headers.authorization;
@@ -37,12 +41,12 @@ export default class AuthServiceProvider extends ServiceProvider {
             token = authHeader.substring(7); // Remove 'Bearer ' prefix
           }
         }
-        
+
         // If no header token, fall back to cookie
         if (!token && req && req.cookies) {
           token = req.cookies['jwt'];
         }
-        
+
         return token;
       },
       secretOrKey: process.env.JWT_SECRET!,
@@ -54,11 +58,21 @@ export default class AuthServiceProvider extends ServiceProvider {
       if (payload.exp && Date.now() > payload.exp * 1000) {
         return done(null, false);
       }
-      
+
+      // Verify user still exists in database
       const user = await User.findOneBy({ id: payload.sub });
-      
+
       if (user) {
-        return done(null, user);
+        // 🚀 PERFORMANCE: Return JWT payload with permissions instead of just user entity
+        return done(null, {
+          id: user.id,
+          sub: payload.sub,
+          permissions: payload.permissions || [],
+          roles: payload.roles || [],
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email
+        });
       }
       return done(null, false);
     });

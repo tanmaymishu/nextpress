@@ -23,7 +23,8 @@ export class CreateUsersTable1655894077446 implements MigrationInterface {
           },
           {
             name: 'email',
-            type: 'text'
+            type: 'text',
+            isUnique: true,
           },
           {
             name: 'password',

@@ -15,8 +15,12 @@ const levels = {
 // the current NODE_ENV: show all the log levels
 // if the server was run in development mode; otherwise,
 // if it was run in production, show only warn and error messages.
+// In test mode, suppress all logs for cleaner output.
 const level = () => {
   const env = process.env.NODE_ENV || 'development';
+  if (env === 'test') {
+    return 'error'; // Only show critical errors in test mode
+  }
   const isDevelopment = env === 'development';
   return isDevelopment ? 'debug' : 'warn';
 };
@@ -57,22 +61,40 @@ const format = winston.format.combine(
 );
 
 // Define which transports the logger must use to print out messages.
-// In this example, we are using three different transports
-const transports = [
-  // Allow the use the console to print the messages
-  new winston.transports.Console({
-    format: consoleFormat
-  }),
-  // Allow to print all the error level messages inside the error.log file
-  new winston.transports.File({
-    filename: 'logs/error.log',
-    level: 'error',
-    format
-  }),
-  // Allow to print all the error message inside the all.log file
-  // (also the error log that are also printed inside the error.log(
-  new winston.transports.File({ filename: 'logs/all.log', format })
-];
+const transports = [];
+
+if (process.env.NODE_ENV === 'test') {
+  // Create a custom null transport that completely suppresses output
+  class NullTransport extends winston.transports.Console {
+    log(info: any, callback: any) {
+      // Do nothing - suppress all output
+      if (callback) {
+        setImmediate(callback);
+        return true;
+      }
+      return true;
+    }
+  }
+  
+  transports.push(new NullTransport());
+} else {
+  // Normal transports for development/production
+  transports.push(
+    // Allow the use the console to print the messages
+    new winston.transports.Console({
+      format: consoleFormat
+    }),
+    // Allow to print all the error level messages inside the error.log file
+    new winston.transports.File({
+      filename: 'logs/error.log',
+      level: 'error',
+      format
+    }),
+    // Allow to print all the error message inside the all.log file
+    // (also the error log that are also printed inside the error.log(
+    new winston.transports.File({ filename: 'logs/all.log', format })
+  );
+}
 
 // Create the logger instance that has to be exported
 // and used to log messages.

@@ -9,7 +9,7 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "test": "turbo run test",
-    "lint": "turbo run lint", 
+    "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "clean": "turbo run clean",
     "dev:api": "turbo run dev --filter=@repo/api",
@@ -18,13 +18,15 @@
     "build:web": "turbo run build --filter=@repo/web",
     "test:api": "turbo run test --filter=@repo/api",
     "migrate": "turbo run migrate --filter=@repo/api",
+    "migrate:fresh": "turbo run migrate:fresh --filter=@repo/api",
     "migrate:rollback": "turbo run migrate:rollback --filter=@repo/api",
     "migrate:make": "cd apps/api && pnpm migrate:make",
     "entity:make": "cd apps/api && pnpm entity:make",
+    "seed": "turbo run seed --filter=@repo/api",
     "fmt": "turbo run fmt --filter=@repo/api"
   },
   "devDependencies": {
-    "turbo": "^1.10.16"
+    "turbo": "^2.5.5"
   },
   "packageManager": "pnpm@10.9.0"
 }

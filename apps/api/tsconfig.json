@@ -8,8 +8,9 @@
       "@repo/shared": ["../../packages/shared/src"]
     },
     "rootDirs": ["./src", "./tests"],
-    "typeRoots": ["./src/types", "../../node_modules/@types"]
+    "typeRoots": ["./src/types", "../../node_modules/@types"],
+    "isolatedModules": true,
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "tests/**/*"],
   "exclude": ["node_modules", "dist", "tests"]
 }

@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import passport from 'passport';
+import { requirePermission, requireAdmin } from './permission.middleware';
 
 const HOME = '/dashboard';
 
@@ -16,7 +17,23 @@ const auth = {
     }
     return res.redirect('/login');
   },
-  api: passport.authenticate('jwt', { session: false })
+  api: passport.authenticate('jwt', { session: false }),
+
+  // Combined auth and permission middleware
+  permission: (permission: string) => {
+    return [
+      passport.authenticate('jwt', { session: false }),
+      requirePermission(permission)
+    ];
+  },
+
+  // Combined auth and admin middleware
+  admin: () => {
+    return [
+      passport.authenticate('jwt', { session: false }),
+      requireAdmin()
+    ];
+  }
 };
 
 export default auth;
