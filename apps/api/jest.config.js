@@ -27,7 +27,6 @@ module.exports = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^@repo/shared/(.*)$': '<rootDir>/../../packages/shared/src/$1',
-    '^ioredis$': '<rootDir>/tests/__mocks__/ioredis.js',
     '^bullmq$': '<rootDir>/tests/__mocks__/bullmq.js'
   },
 
@@ -56,6 +55,9 @@ module.exports = {
   maxWorkers: 1,
 
   // Suppress console errors/warnings during tests for cleaner output
-  setupFilesAfterEnv: ['<rootDir>/tests/setupTests.js'],
+  setupFilesAfterEnv: [
+    '<rootDir>/tests/setupTests.js',
+    '<rootDir>/tests/setupMocks.js'
+  ],
   moduleDirectories: ['node_modules', '<rootDir>/node_modules'],
 };
