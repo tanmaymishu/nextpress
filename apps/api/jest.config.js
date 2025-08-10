@@ -56,5 +56,6 @@ module.exports = {
   maxWorkers: 1,
 
   // Suppress console errors/warnings during tests for cleaner output
-  setupFilesAfterEnv: ['<rootDir>/tests/setupTests.js']
+  setupFilesAfterEnv: ['<rootDir>/tests/setupTests.js'],
+  moduleDirectories: ['node_modules', '<rootDir>/node_modules'],
 };

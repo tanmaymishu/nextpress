@@ -7,7 +7,7 @@ import { User } from '../../src/database/sql/entities/User';
 import { Role } from '../../src/database/sql/entities/Role';
 import AuthService from '../../src/services/auth.service';
 import Container from 'typedi';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 describe('Roles API', () => {
   let adminToken: string;
@@ -43,10 +43,10 @@ describe('Roles API', () => {
     regularUser.email = 'regular@test.com';
     regularUser.password = hashedPassword;
     await regularUser.save();
-    
+
     // Assign default permissions (includes roles.read)
     await regularUser.assignDefaultUserPermissions();
-    
+
     // Generate token for regular user
     const loginResult = await authService.login({
       body: { email: 'regular@test.com', password: 'password' }
@@ -58,7 +58,7 @@ describe('Roles API', () => {
     testRole.name = 'test-role';
     testRole.label = 'Test Role';
     await testRole.save();
-    
+
     // Assign some permissions to the test role
     await testRole.givePermissionTo('users.read');
     await testRole.givePermissionTo('dashboard.analytics');
@@ -113,7 +113,7 @@ describe('Roles API', () => {
 
       expect(response.body.data.length).toBeGreaterThan(0);
       // Should find test role
-      expect(response.body.data.some((role: any) => 
+      expect(response.body.data.some((role: any) =>
         role.name.includes('test') || role.label.includes('Test')
       )).toBe(true);
     });
@@ -155,7 +155,7 @@ describe('Roles API', () => {
       expect(role).toHaveProperty('users');
       expect(Array.isArray(role.permissions)).toBe(true);
       expect(Array.isArray(role.users)).toBe(true);
-      
+
       // Should have the permissions we assigned
       expect(role.permissions.some((p: any) => p.name === 'users.read')).toBe(true);
       expect(role.permissions.some((p: any) => p.name === 'dashboard.analytics')).toBe(true);

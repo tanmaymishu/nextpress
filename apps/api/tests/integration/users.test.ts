@@ -7,7 +7,7 @@ import { User } from '../../src/database/sql/entities/User';
 import { Role } from '../../src/database/sql/entities/Role';
 import AuthService from '../../src/services/auth.service';
 import Container from 'typedi';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 describe('Users API', () => {
   let adminToken: string;
@@ -42,10 +42,10 @@ describe('Users API', () => {
     regularUser.email = 'regular@test.com';
     regularUser.password = hashedPassword;
     await regularUser.save();
-    
+
     // Assign default permissions
     await regularUser.assignDefaultUserPermissions();
-    
+
     // Generate token for regular user
     const loginResult = await authService.login({
       body: { email: 'regular@test.com', password: 'password' }
@@ -101,8 +101,8 @@ describe('Users API', () => {
 
       expect(response.body.data.length).toBeGreaterThan(0);
       // Should find admin user
-      expect(response.body.data.some((user: any) => 
-        user.firstName.toLowerCase().includes('admin') || 
+      expect(response.body.data.some((user: any) =>
+        user.firstName.toLowerCase().includes('admin') ||
         user.email.toLowerCase().includes('admin')
       )).toBe(true);
     });
@@ -429,7 +429,7 @@ describe('Users API', () => {
 
       expect(response.body).toHaveProperty('data');
       expect(Array.isArray(response.body.data)).toBe(true);
-      
+
       if (response.body.data.length > 0) {
         const role = response.body.data[0];
         expect(role).toHaveProperty('id');

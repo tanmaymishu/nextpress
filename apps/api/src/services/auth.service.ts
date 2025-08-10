@@ -1,5 +1,5 @@
 import { User } from '@/database/sql/entities/User';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { mailQueue } from '@/queues/mail';
 import SendWelcomeEmail from '@/jobs/send-welcome-email';
@@ -11,17 +11,17 @@ export default class AuthService {
   async createUser(body: any) {
     // Check if this is the first user
     const isFirstUser = await User.isFirstUserCreation();
-    
+
     // Create new user
     let user = new User();
     user.firstName = body.firstName;
     user.lastName = body.lastName;
     user.email = body.email;
     user.password = bcrypt.hashSync(body.password, 10);
-    
+
     // Save user first to get an ID
     await user.save();
-    
+
     // Assign permissions based on whether this is the first user
     if (isFirstUser) {
       // First user gets all permissions (admin)
@@ -30,13 +30,13 @@ export default class AuthService {
       // Subsequent users get default permissions (all except user edit/delete)
       await user.assignDefaultUserPermissions();
     }
-    
+
     // Reload user with permissions for JWT generation
     const userWithPermissions = await User.findOne({
       where: { id: user.id },
       relations: ['roles', 'roles.permissions', 'permissions']
     });
-    
+
     return {
       id: userWithPermissions!.id,
       firstName: user.firstName,
@@ -87,12 +87,12 @@ export default class AuthService {
 
     // Collect all permissions from roles and direct permissions
     const permissions = new Set<string>();
-    
+
     // Add direct permissions
     if (user.permissions) {
       user.permissions.forEach(permission => permissions.add(permission.name));
     }
-    
+
     // Add role-based permissions
     if (user.roles) {
       user.roles.forEach(role => {

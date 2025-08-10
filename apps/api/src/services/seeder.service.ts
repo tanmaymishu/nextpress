@@ -2,6 +2,7 @@ import { Service } from 'typedi';
 import { Permission, STATIC_PERMISSIONS } from '@/database/sql/entities/Permission';
 import { User } from '@/database/sql/entities/User';
 import logger from '../util/logger';
+import bcrypt from 'bcryptjs';
 
 @Service()
 export class SeederService {
@@ -30,7 +31,6 @@ export class SeederService {
       if (userCount === 0) {
         logger.info('No users found. Creating default admin user...');
 
-        const bcrypt = require('bcrypt');
         const hashedPassword = await bcrypt.hash('password', 10);
 
         const admin = new User();

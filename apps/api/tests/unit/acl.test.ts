@@ -5,6 +5,7 @@ import { Permission } from '../../src/database/sql/entities/Permission';
 import { SeederService } from '../../src/services/seeder.service';
 import { describe, beforeAll, afterAll, beforeEach, it, expect } from '@jest/globals'
 import { refreshDB } from '../bootstrap';
+import bcrypt from 'bcryptjs';
 
 describe('ACL System', () => {
   let seederService = new SeederService();
@@ -115,7 +116,6 @@ describe('ACL System', () => {
 
     beforeEach(async () => {
       await seederService.seedPermissions();
-      const bcrypt = require('bcrypt');
       const hashedPassword = await bcrypt.hash('testpassword', 10);
 
       testUser = new User();
@@ -306,7 +306,7 @@ describe('ACL System', () => {
 
       // Assign some permissions to admin role
       await adminRole.givePermissionTo('users.create');
-      await adminRole.givePermissionTo('users.read'); 
+      await adminRole.givePermissionTo('users.read');
       await adminRole.givePermissionTo('dashboard.admin');
 
       // Verify admin has permissions

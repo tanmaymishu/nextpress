@@ -41,5 +41,4 @@ jobs:
           cache: 'pnpm'
 
       - run: pnpm install --frozen-lockfile
-      - run: pnpm rebuild bcrypt sqlite3
-      - run: pnpm --filter @repo/api test
+      - run: pnpm test

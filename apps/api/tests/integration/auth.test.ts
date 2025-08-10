@@ -4,7 +4,7 @@ import app from '../../src/app';
 import { refreshDB } from '../bootstrap';
 import { describe, beforeEach, it, expect } from '@jest/globals';
 import { User } from '../../src/database/sql/entities/User';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 describe('Authentication API', () => {
   beforeEach(async () => {
