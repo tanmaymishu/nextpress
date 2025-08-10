@@ -1,9 +1,9 @@
 import 'reflect-metadata';
 import request from 'supertest';
-import app from '../../src/app';
+import app from '@/app';
 import { refreshDB } from '../bootstrap';
 import { describe, beforeEach, it, expect } from '@jest/globals';
-import { User } from '../../src/database/sql/entities/User';
+import { User } from '@/database/sql/entities/User';
 import bcrypt from 'bcryptjs';
 
 describe('Authentication API', () => {

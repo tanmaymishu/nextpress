@@ -1,8 +1,8 @@
 import 'reflect-metadata';
-import { User } from '../../src/database/sql/entities/User';
-import { Role } from '../../src/database/sql/entities/Role';
-import { Permission } from '../../src/database/sql/entities/Permission';
-import { SeederService } from '../../src/services/seeder.service';
+import { User } from '@/database/sql/entities/User';
+import { Role } from '@/database/sql/entities/Role';
+import { Permission } from '@/database/sql/entities/Permission';
+import { SeederService } from '@/services/seeder.service';
 import { describe, beforeAll, afterAll, beforeEach, it, expect } from '@jest/globals'
 import { refreshDB } from '../bootstrap';
 import bcrypt from 'bcryptjs';

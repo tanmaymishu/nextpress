@@ -1,4 +1,4 @@
-import { User } from '../../src/database/sql/entities/User';
+import { User } from '@/database/sql/entities/User';
 import Container from 'typedi';
 import AuthService from '../../src/services/auth.service';
 import { describe, it, expect } from '@jest/globals'

@@ -1,7 +1,7 @@
-import AuthService from '../src/services/auth.service';
-import { SeederService } from '../src/services/seeder.service';
+import AuthService from '@/services/auth.service';
+import { SeederService } from '@/services/seeder.service';
 import Container from 'typedi';
-import { AppDataSource } from '../src/database/sql/data-source';
+import { AppDataSource } from '@/database/sql/data-source';
 
 export async function initDB() {
   // Initialize if not already done (reuse existing connection)

@@ -1,11 +1,11 @@
 import 'reflect-metadata';
 import request from 'supertest';
-import app from '../../src/app';
+import app from '@/app';
 import { refreshDB } from '../bootstrap';
 import { describe, beforeEach, it, expect } from '@jest/globals';
-import { User } from '../../src/database/sql/entities/User';
-import { Role } from '../../src/database/sql/entities/Role';
-import AuthService from '../../src/services/auth.service';
+import { User } from '@/database/sql/entities/User';
+import { Role } from '@/database/sql/entities/Role';
+import AuthService from '@/services/auth.service';
 import Container from 'typedi';
 import bcrypt from 'bcryptjs';
 
