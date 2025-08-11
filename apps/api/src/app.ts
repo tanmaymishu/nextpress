@@ -46,8 +46,11 @@ const redisClient = createClient({
 
 redisClient.on('error', (err) => console.log('Redis Client Error', err));
 
-// Connect to Redis
-redisClient.connect();
+// Connect to Redis only in non-test environments
+// Tests handle their own Redis connection via redis-memory-server
+if (process.env.NODE_ENV !== 'test') {
+  redisClient.connect();
+}
 
 // Create an express app.
 const app = express();
