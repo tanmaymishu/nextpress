@@ -2,9 +2,9 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "baseUrl": "./src",
+    "baseUrl": "./",
     "paths": {
-      "@/*": ["./*"],
+      "@/*": ["./src/*"],
       "@repo/shared": ["../../packages/shared/src"]
     },
     "rootDirs": ["./src", "./tests"],
