@@ -24,7 +24,7 @@ export class LoginController {
           secure: process.env.NODE_ENV === 'production', // Should be true on production
           sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax' // Required for cross-origin cookies
         });
-        return res.json({ user });
+        return res.status(200).json({ user });
       })
       .catch((err) => {
         logger.debug('Login attempt failed:', err.message);
@@ -50,6 +50,6 @@ export class LoginController {
       });
     }
     
-    return res.json({ message: 'Logged out successfully' });
+    return res.status(200).json({ message: 'Logged out successfully' });
   }
 }

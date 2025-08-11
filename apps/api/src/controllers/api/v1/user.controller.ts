@@ -27,7 +27,7 @@ export class UserController {
       return res.status(404).json({ message: 'User not found' });
     }
     
-    return res.json({
+    return res.status(200).json({
       id: userWithPermissions.id,
       firstName: userWithPermissions.firstName,
       lastName: userWithPermissions.lastName,
