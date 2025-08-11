@@ -20,12 +20,12 @@ export const AppDataSource = new DataSource({
   logging: process.env.NODE_ENV === 'development',
   entities: [
     `./${
-      process.env.NODE_ENV == 'production' ? 'dist' : 'src'
+      process.env.NODE_ENV == 'production' ? 'dist/src' : 'src'
     }/database/sql/entities/*.{js,ts}`
   ],
   migrations: [
     `./${
-      process.env.NODE_ENV == 'production' ? 'dist' : 'src'
+      process.env.NODE_ENV == 'production' ? 'dist/src' : 'src'
     }/database/sql/migrations/*`
   ],
   namingStrategy: new SnakeNamingStrategy()

@@ -2,6 +2,7 @@ import app from './app';
 import { Container } from 'typedi';
 import { SeederService } from './services/seeder.service';
 import { AppDataSource } from './database/sql/data-source';
+import { BaseEntity } from 'typeorm';
 
 const port = process.env.APP_PORT || 3000;
 
@@ -11,6 +12,10 @@ async function startServer() {
     // Ensure database is initialized
     if (!AppDataSource.isInitialized) {
       await AppDataSource.initialize();
+      
+      // Set the BaseEntity to use our DataSource
+      BaseEntity.useDataSource(AppDataSource);
+      
       console.log('Connected to DataSource!');
     }
 
