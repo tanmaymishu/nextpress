@@ -5,7 +5,7 @@
   "scripts": {
     "postinstall": "echo \"Environment check: VERCEL=$VERCEL, RENDER=$RENDER, CI=$CI, RENDER_SERVICE_ID=$RENDER_SERVICE_ID\" && if [ \"$VERCEL\" = \"1\" ] || [ \"$RENDER\" = \"1\" ] || [ \"$CI\" = \"true\" ] || [ -n \"$RENDER_SERVICE_ID\" ]; then echo \"Skipping migrations in deployment environment\"; exit 0; fi && if [ -e .env ]; then echo \".env exists\"; else echo \".env not found, copying .env.example\"; cp .env.example .env; fi && echo \"Setting up SQLite database...\" && pnpm migrate",
     "typeorm": "typeorm-ts-node-commonjs",
-    "build": "tsc && cp -R src/views dist/src/views",
+    "build": "tsc && mkdir -p dist/src/views && cp -R src/views/* dist/src/views/",
     "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/index.ts",
     "test": "export NODE_ENV=test && jest --runInBand",
     "start": "export NODE_ENV=production && npm rebuild sqlite3 && tsc && export NODE_ENV=development && pnpm migrate && pnpm seed && export NODE_ENV=production && TS_NODE_BASEURL=./dist node -r tsconfig-paths/register ./dist/src/index.js",

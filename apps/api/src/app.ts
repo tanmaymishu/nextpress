@@ -61,13 +61,13 @@ const sessionConfig: any = {
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' as const : 'lax' as const,
+    secure: process.env.NODE_ENV === 'production' && process.env.HTTPS === 'true',
+    sameSite: process.env.NODE_ENV === 'production' && process.env.HTTPS === 'true' ? 'none' as const : 'lax' as const,
     maxAge: 1000 * 60 * 60 * 24
   }
 };
 
-// Only use Redis store in non-test environments
+// Use Redis store for all environments except tests
 if (process.env.NODE_ENV !== 'test') {
   sessionConfig.store = new RedisStore({ client: redisClient });
 }
@@ -168,7 +168,7 @@ app.set('views', path.join(__dirname, './views'));
 app.set('view engine', 'ejs');
 
 // Serve static files from root public directory
-app.use(express.static(path.join(__dirname, '../../../../public')));
+app.use(express.static(path.join(__dirname, process.env.NODE_ENV === 'production' ? '../../../../public' : '../../../public')));
 useContainer(Container);
 
 useExpressServer(app, {
