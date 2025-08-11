@@ -163,8 +163,8 @@ importers:
         specifier: ^9.0.6
         version: 9.0.10
       '@types/method-override':
-        specifier: ^0.0.35
-        version: 0.0.35
+        specifier: ^3.0.0
+        version: 3.0.0(@types/express@4.17.23)
       '@types/morgan':
         specifier: ^1.9.9
         version: 1.9.10
@@ -1991,8 +1991,10 @@ packages:
   '@types/jsonwebtoken@9.0.10':
     resolution: {integrity: sha512-asx5hIG9Qmf/1oStypjanR7iKTv0gXQ1Ov/jfrX6kS/EO0OFni8orbmGCn0672NHR3kXHwpAwR+B368ZGN/2rA==}
 
-  '@types/method-override@0.0.35':
-    resolution: {integrity: sha512-HdhM5xiIV8fwsZ3B8e9IKWJOqEgmXXBJ/qQzhs5Z8idjsszqEX4j/7/QAcso27ArZ1tSBXg2XMlI1cIHAsCTXA==}
+  '@types/method-override@3.0.0':
+    resolution: {integrity: sha512-7XFHR6j7JljprBpzzRZatakUXm1kEGAM3PL/GSsGRHtDvOAKYCdmnXX/5YSl1eQrpJymGs9tRekSWEGaG+Ntjw==}
+    peerDependencies:
+      '@types/express': '*'
 
   '@types/methods@1.1.4':
     resolution: {integrity: sha512-ymXWVrDiCxTBE3+RIrrP533E70eA+9qu7zdWoHuOmGujkYtzf4HQF96b8nwHLqhuf4ykX61IGRIB38CC6/sImQ==}
@@ -7994,7 +7996,7 @@ snapshots:
       '@types/ms': 2.1.0
       '@types/node': 22.17.1
 
-  '@types/method-override@0.0.35':
+  '@types/method-override@3.0.0(@types/express@4.17.23)':
     dependencies:
       '@types/express': 4.17.23
 
