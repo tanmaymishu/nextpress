@@ -1,5 +1,4 @@
 import {
-  JsonController,
   Get,
   Post,
   Put,
@@ -7,7 +6,7 @@ import {
   Param,
   Body,
   UseBefore,
-  QueryParam
+  QueryParam, Controller
 } from 'routing-controllers';
 import { Container, Service } from 'typedi';
 import { Role } from '@/database/sql/entities/Role';
@@ -32,7 +31,7 @@ interface AssignPermissionsRequest {
 }
 
 @Service()
-@JsonController('/api/v1/roles')
+@Controller('/api/v1/roles')
 export class RolesV1Controller {
   private cacheService = Container.get(PermissionCacheService);
 

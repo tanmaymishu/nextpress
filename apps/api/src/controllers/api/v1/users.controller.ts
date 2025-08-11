@@ -1,5 +1,4 @@
 import {
-  JsonController,
   Get,
   Post,
   Put,
@@ -8,7 +7,7 @@ import {
   Body,
   UseBefore,
   Req,
-  QueryParam
+  QueryParam, Controller
 } from 'routing-controllers';
 import { Service } from 'typedi';
 import { Request } from 'express';
@@ -38,7 +37,7 @@ interface AssignRolesRequest {
 }
 
 @Service()
-@JsonController('/api/v1/users')
+@Controller('/api/v1/users')
 export class UsersV1Controller {
 
   @Get('/')

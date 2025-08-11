@@ -26,7 +26,7 @@ import path from 'path';
 
 import IORedis from 'ioredis';
 import connectRedis from 'connect-redis';
-import session from 'express-session';
+import session, { SessionOptions } from 'express-session';
 import flash from 'connect-flash';
 import passport from 'passport';
 import Container from 'typedi';
@@ -55,7 +55,7 @@ app.use(cookieParser());
 
 //Configure session middleware
 // Configure session store - use memory store for tests, Redis for production
-const sessionConfig: any = {
+const sessionConfig: SessionOptions = {
   secret: process.env.JWT_SECRET as string,
   resave: false,
   saveUninitialized: false,
