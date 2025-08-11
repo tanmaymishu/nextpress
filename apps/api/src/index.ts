@@ -1,6 +1,4 @@
-import app from './app';
-import { Container } from 'typedi';
-import { SeederService } from './services/seeder.service';
+import app, { redisClient } from './app';
 import { AppDataSource } from './database/sql/data-source';
 import { BaseEntity } from 'typeorm';
 
@@ -12,10 +10,10 @@ async function startServer() {
     // Ensure database is initialized
     if (!AppDataSource.isInitialized) {
       await AppDataSource.initialize();
-      
+
       // Set the BaseEntity to use our DataSource
       BaseEntity.useDataSource(AppDataSource);
-      
+
       console.log('Connected to DataSource!');
     }
 
@@ -32,15 +30,22 @@ async function startServer() {
 
     async function gracefulShutdown() {
       console.log('\nReceived shutdown signal, closing server gracefully...');
-      
+
       server.close(async () => {
         console.log('HTTP server closed.');
-        
+
+        // Close Redis connection
+        if (redisClient.isReady) {
+          redisClient.destroy();
+          console.log('Redis connection closed.');
+        }
+
+        // Close database connection
         if (AppDataSource.isInitialized) {
           await AppDataSource.destroy();
           console.log('Database connection closed.');
         }
-        
+
         process.exit(0);
       });
     }

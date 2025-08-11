@@ -24,8 +24,8 @@ import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
 import { mailQueue } from '@/queues/mail';
 import path from 'path';
 
-import IORedis from 'ioredis';
-import connectRedis from 'connect-redis';
+import { createClient } from 'redis';
+import { RedisStore } from 'connect-redis';
 import session, { SessionOptions } from 'express-session';
 import flash from 'connect-flash';
 import passport from 'passport';
@@ -37,12 +37,20 @@ import DatabaseServiceProvider from '@/providers/database-service.provider';
 const providers = [AppServiceProvider, DatabaseServiceProvider, AuthServiceProvider];
 providers.forEach((provider) => new provider().register());
 
-const redisClient = new IORedis({
-  port: parseInt(process.env.REDIS_PORT || '6379'),
-  host: process.env.REDIS_HOST || 'localhost'
+const redisClient = createClient({
+  socket: {
+    port: parseInt(process.env.REDIS_PORT || '6379'),
+    host: process.env.REDIS_HOST || 'localhost'
+  }
 });
 
-const RedisStore = connectRedis(session);
+redisClient.on('error', (err) => console.log('Redis Client Error', err));
+
+// Connect to Redis only in non-test environments
+// Tests handle their own Redis connection via redis-memory-server
+if (process.env.NODE_ENV !== 'test') {
+  redisClient.connect();
+}
 
 // Create an express app.
 const app = express();
@@ -69,7 +77,10 @@ const sessionConfig: SessionOptions = {
 
 // Use Redis store for all environments except tests
 if (process.env.NODE_ENV !== 'test') {
-  sessionConfig.store = new RedisStore({ client: redisClient });
+  sessionConfig.store = new RedisStore({
+    client: redisClient,
+    prefix: "myapp:",
+  });
 }
 
 app.use(session(sessionConfig));
