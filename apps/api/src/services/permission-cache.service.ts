@@ -24,7 +24,7 @@ export class PermissionCacheService {
       const permissions = await this.fetchUserPermissionsFromDB(userId);
 
       // Cache the result
-      await redisClient.setex(cacheKey, this.CACHE_TTL, JSON.stringify(permissions));
+      await redisClient.setEx(cacheKey, this.CACHE_TTL, JSON.stringify(permissions));
 
       return permissions;
     } catch (error) {
