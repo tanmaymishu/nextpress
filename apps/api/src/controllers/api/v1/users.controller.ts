@@ -84,8 +84,8 @@ export class UsersV1Controller {
           name: role.name,
           label: role.label
         })),
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt
+        createdAt: user.createdAt.toISOString(),
+        updatedAt: user.updatedAt.toISOString()
       })),
       meta: {
         total,
@@ -128,8 +128,8 @@ export class UsersV1Controller {
           }))
         })),
         permissions,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt
+        createdAt: user.createdAt.toISOString(),
+        updatedAt: user.updatedAt.toISOString()
       }
     };
   }

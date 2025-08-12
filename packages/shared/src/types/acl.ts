@@ -3,8 +3,8 @@ export interface Permission {
   id: number;
   name: string;
   label?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Role {
@@ -17,8 +17,8 @@ export interface Role {
   permissionsCount?: number;
   usersCount?: number;
   userCount?: number;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface User {
@@ -29,8 +29,8 @@ export interface User {
   isAdmin: boolean;
   roles: Role[];
   permissions?: string[];
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }
 
 // API Request/Response types

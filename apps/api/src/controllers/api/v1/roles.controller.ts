@@ -67,8 +67,8 @@ export class RolesV1Controller {
         label: role.label,
         permissionsCount: role.permissions?.length || 0,
         usersCount: role.users?.length || 0,
-        createdAt: role.createdAt,
-        updatedAt: role.updatedAt
+        createdAt: role.createdAt.toISOString(),
+        updatedAt: role.updatedAt.toISOString()
       })),
       meta: {
         total,
@@ -107,8 +107,8 @@ export class RolesV1Controller {
           lastName: u.lastName,
           email: u.email
         })),
-        createdAt: role.createdAt,
-        updatedAt: role.updatedAt
+        createdAt: role.createdAt.toISOString(),
+        updatedAt: role.updatedAt.toISOString()
       }
     };
   }
@@ -137,8 +137,8 @@ export class RolesV1Controller {
         id: role.id,
         name: role.name,
         label: role.label,
-        createdAt: role.createdAt,
-        updatedAt: role.updatedAt
+        createdAt: role.createdAt.toISOString(),
+        updatedAt: role.updatedAt.toISOString()
       },
       message: 'Role created successfully'
     };
@@ -179,7 +179,7 @@ export class RolesV1Controller {
         id: role.id,
         name: role.name,
         label: role.label,
-        updatedAt: role.updatedAt
+        updatedAt: role.updatedAt.toISOString()
       },
       message: 'Role updated successfully'
     };
