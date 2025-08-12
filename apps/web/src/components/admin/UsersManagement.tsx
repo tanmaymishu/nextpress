@@ -315,7 +315,7 @@ export default function UsersManagement() {
                         - Current user is admin (can edit anyone)
                         - OR current user is editing themselves (non-admin can edit own profile)
                     */}
-                    {(currentUser?.isAdmin || currentUser?.id === user.id.toString()) && (
+                    {(currentUser?.isAdmin || currentUser?.id === user.id) && (
                       <Button
                         variant="outline"
                         size="sm"
@@ -330,7 +330,7 @@ export default function UsersManagement() {
                         - AND target user is not admin (admin can't delete other admins)
                         - AND target user is not themselves (admin can't delete themselves)
                     */}
-                    {currentUser?.isAdmin && !user.isAdmin && currentUser?.id !== user.id.toString() && (
+                    {currentUser?.isAdmin && !user.isAdmin && currentUser?.id !== user.id && (
                       <Popover>
                         <PopoverTrigger asChild>
                           <Button

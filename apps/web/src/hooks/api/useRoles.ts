@@ -8,6 +8,7 @@ import {
   UpdateRoleRequest,
   AssignPermissionsRequest 
 } from '@repo/shared';
+import { normalizeRole } from '@/lib/dataUtils';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
@@ -27,11 +28,20 @@ async function fetchRoles(page: number = 1, limit: number = 10, search?: string)
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to fetch roles');
+    try {
+      const error = await response.json();
+      throw new Error(error.error || error.message || `Failed to fetch roles (${response.status})`);
+    } catch (jsonError) {
+      throw new Error(`Failed to fetch roles: ${response.statusText} (${response.status})`);
+    }
   }
 
-  return response.json();
+  const data = await response.json();
+  // Normalize role data for consistent types
+  return {
+    ...data,
+    data: data.data?.map(normalizeRole) || []
+  };
 }
 
 async function fetchRole(id: number): Promise<ACLApiResponse<Role>> {
