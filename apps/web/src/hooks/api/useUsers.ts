@@ -8,8 +8,7 @@ import {
   UpdateUserRequest,
   AssignRolesRequest 
 } from '@repo/shared';
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+import { apiRequest } from '@/lib/apiRequest';
 
 // API functions
 async function fetchUsers(
@@ -25,138 +24,46 @@ async function fetchUsers(
     ...(role && { role })
   });
 
-  const response = await fetch(`${API_BASE}/api/v1/users?${params}`, {
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to fetch users');
-  }
-
-  return response.json();
+  return apiRequest<ACLPaginatedResponse<User>>(`/api/v1/users?${params}`);
 }
 
 async function fetchUser(id: number): Promise<ACLApiResponse<User>> {
-  const response = await fetch(`${API_BASE}/api/v1/users/${id}`, {
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to fetch user');
-  }
-
-  return response.json();
+  return apiRequest<ACLApiResponse<User>>(`/api/v1/users/${id}`);
 }
 
 async function createUser(data: CreateUserRequest): Promise<ACLApiResponse<User>> {
-  const response = await fetch(`${API_BASE}/api/v1/users`, {
+  return apiRequest<ACLApiResponse<User>>(`/api/v1/users`, {
     method: 'POST',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json'
-    },
     body: JSON.stringify(data)
   });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to create user');
-  }
-
-  return response.json();
 }
 
 async function updateUser(id: number, data: UpdateUserRequest): Promise<ACLApiResponse<User>> {
-  const response = await fetch(`${API_BASE}/api/v1/users/${id}`, {
+  return apiRequest<ACLApiResponse<User>>(`/api/v1/users/${id}`, {
     method: 'PUT',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json'
-    },
     body: JSON.stringify(data)
   });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to update user');
-  }
-
-  return response.json();
 }
 
 async function deleteUser(id: number): Promise<ACLApiResponse<null>> {
-  const response = await fetch(`${API_BASE}/api/v1/users/${id}`, {
-    method: 'DELETE',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json'
-    }
+  return apiRequest<ACLApiResponse<null>>(`/api/v1/users/${id}`, {
+    method: 'DELETE'
   });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to delete user');
-  }
-
-  return response.json();
 }
 
 async function assignRoles(userId: number, data: AssignRolesRequest): Promise<ACLApiResponse<null>> {
-  const response = await fetch(`${API_BASE}/api/v1/users/${userId}/roles`, {
+  return apiRequest<ACLApiResponse<null>>(`/api/v1/users/${userId}/roles`, {
     method: 'POST',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json'
-    },
     body: JSON.stringify(data)
   });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to assign roles');
-  }
-
-  return response.json();
 }
 
 async function fetchUserPermissions(userId: number): Promise<ACLApiResponse<{ userId: number; roles: string[]; permissions: string[] }>> {
-  const response = await fetch(`${API_BASE}/api/v1/users/${userId}/permissions`, {
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to fetch user permissions');
-  }
-
-  return response.json();
+  return apiRequest<ACLApiResponse<{ userId: number; roles: string[]; permissions: string[] }>>(`/api/v1/users/${userId}/permissions`);
 }
 
 async function fetchAvailableRoles(): Promise<ACLApiResponse<Role[]>> {
-  const response = await fetch(`${API_BASE}/api/v1/users/roles/available`, {
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to fetch roles');
-  }
-
-  return response.json();
+  return apiRequest<ACLApiResponse<Role[]>>(`/api/v1/users/roles/available`);
 }
 
 // Hooks

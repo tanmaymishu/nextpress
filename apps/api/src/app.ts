@@ -66,29 +66,44 @@ app.use(helmet());
 // Make req.cookies accessible
 app.use(cookieParser());
 
-//Configure session middleware
 // Configure session store - use memory store for tests, Redis for production
-const sessionConfig: SessionOptions = {
+const isProd = process.env.NODE_ENV === 'production';
+
+const sessionConfig: session.SessionOptions = {
   secret: process.env.JWT_SECRET as string,
   resave: false,
   saveUninitialized: false,
+  store: isProd
+    ? new RedisStore({
+      client: redisClient,
+      prefix: 'myapp:',
+    })
+    : undefined,
   cookie: {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'none', // Change it to 'strict' or 'lax' to strengthen security
-    maxAge: 1000 * 60 * 60 * 24
-  }
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    maxAge: 1000 * 60 * 60 * 24, // 1 day
+  },
 };
 
-// Use Redis store for all environments except tests
-if (process.env.NODE_ENV !== 'test') {
-  sessionConfig.store = new RedisStore({
-    client: redisClient,
-    prefix: "myapp:",
-  });
-}
-
 app.use(session(sessionConfig));
+
+// Enable CORS with credentials support
+app.use(
+  cors({
+    origin: isProd
+      ? process.env.FRONTEND_URL || 'https://nextpress-demo.vercel.app'
+      : 'http://localhost:3001',
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'X-Requested-With',
+    ],
+  })
+);
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -100,8 +115,8 @@ app.use(
     req.wantsJson = () => {
       // Check if it's an API request or if Accept header includes JSON
       return req.path.startsWith('/api/') ||
-             req.get('Content-Type')?.includes('application/json') ||
-             req.accepts('json') === 'json';
+        req.get('Content-Type')?.includes('application/json') ||
+        req.accepts('json') === 'json';
     };
     next();
   },
@@ -127,15 +142,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // Parse the form-data request body.
 app.use(multer().any());
-// Enable CORS with credentials support
-app.use(cors({
-  origin: process.env.NODE_ENV === 'production'
-    ? [process.env.FRONTEND_URL || 'https://nextpress-demo.vercel.app']
-    : ['http://localhost:3001'],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
 // Log the incoming requests to console.
 app.use(morganLogger);
 

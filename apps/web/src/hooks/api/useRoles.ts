@@ -8,8 +8,7 @@ import {
   UpdateRoleRequest,
   AssignPermissionsRequest 
 } from '@repo/shared';
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+import { apiRequest } from '@/lib/apiRequest';
 
 // API functions
 async function fetchRoles(page: number = 1, limit: number = 10, search?: string): Promise<ACLPaginatedResponse<Role>> {
@@ -19,122 +18,42 @@ async function fetchRoles(page: number = 1, limit: number = 10, search?: string)
     ...(search && { search })
   });
 
-  const response = await fetch(`${API_BASE}/api/v1/roles?${params}`, {
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to fetch roles');
-  }
-
-  return response.json();
+  return apiRequest<ACLPaginatedResponse<Role>>(`/api/v1/roles?${params}`);
 }
 
 async function fetchRole(id: number): Promise<ACLApiResponse<Role>> {
-  const response = await fetch(`${API_BASE}/api/v1/roles/${id}`, {
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to fetch role');
-  }
-
-  return response.json();
+  return apiRequest<ACLApiResponse<Role>>(`/api/v1/roles/${id}`);
 }
 
 async function createRole(data: CreateRoleRequest): Promise<ACLApiResponse<Role>> {
-  const response = await fetch(`${API_BASE}/api/v1/roles`, {
+  return apiRequest<ACLApiResponse<Role>>(`/api/v1/roles`, {
     method: 'POST',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json'
-    },
     body: JSON.stringify(data)
   });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to create role');
-  }
-
-  return response.json();
 }
 
 async function updateRole(id: number, data: UpdateRoleRequest): Promise<ACLApiResponse<Role>> {
-  const response = await fetch(`${API_BASE}/api/v1/roles/${id}`, {
+  return apiRequest<ACLApiResponse<Role>>(`/api/v1/roles/${id}`, {
     method: 'PUT',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json'
-    },
     body: JSON.stringify(data)
   });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to update role');
-  }
-
-  return response.json();
 }
 
 async function deleteRole(id: number): Promise<ACLApiResponse<null>> {
-  const response = await fetch(`${API_BASE}/api/v1/roles/${id}`, {
-    method: 'DELETE',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json'
-    }
+  return apiRequest<ACLApiResponse<null>>(`/api/v1/roles/${id}`, {
+    method: 'DELETE'
   });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to delete role');
-  }
-
-  return response.json();
 }
 
 async function assignPermissions(roleId: number, data: AssignPermissionsRequest): Promise<ACLApiResponse<null>> {
-  const response = await fetch(`${API_BASE}/api/v1/roles/${roleId}/permissions`, {
+  return apiRequest<ACLApiResponse<null>>(`/api/v1/roles/${roleId}/permissions`, {
     method: 'POST',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json'
-    },
     body: JSON.stringify(data)
   });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to assign permissions');
-  }
-
-  return response.json();
 }
 
 async function fetchAvailablePermissions(): Promise<ACLApiResponse<Permission[]>> {
-  const response = await fetch(`${API_BASE}/api/v1/roles/permissions/available`, {
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to fetch permissions');
-  }
-
-  return response.json();
+  return apiRequest<ACLApiResponse<Permission[]>>(`/api/v1/roles/permissions/available`);
 }
 
 // Hooks

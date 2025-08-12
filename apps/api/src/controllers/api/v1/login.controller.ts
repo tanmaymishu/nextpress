@@ -19,12 +19,24 @@ export class LoginController {
     return this.authService
       .login(req)
       .then((user) => {
+        // Set cookie for same-domain usage
         res.cookie('jwt', user.token, {
           httpOnly: true,
-          secure: process.env.NODE_ENV === 'production', // Should be true on production
-          sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax' // Required for cross-origin cookies
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
         });
-        return res.status(200).json({ user });
+
+        // Also return token in response for cross-domain localStorage usage
+        return res.status(200).json({ 
+          user: {
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            isAdmin: user.isAdmin
+          },
+          token: user.token // Include token for localStorage storage
+        });
       })
       .catch((err) => {
         logger.debug('Login attempt failed:', err.message);

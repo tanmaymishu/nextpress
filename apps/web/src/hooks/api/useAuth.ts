@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { ApiClient } from '@/lib/api';
 import { LoginRequest, RegisterRequest, MeResponse } from '@repo/shared';
+import { setAuthToken, removeAuthToken, isCrossDomain } from '@/lib/authStrategy';
 
 const api = new ApiClient();
 
@@ -28,6 +29,12 @@ export const useLogin = () => {
   return useMutation({
     mutationFn: (credentials: LoginRequest) => api.login(credentials),
     onSuccess: (data) => {
+      // Store token if we received one (for cross-domain auth)
+      if (data.token) {
+        setAuthToken(data.token);
+        console.log('Authentication strategy:', isCrossDomain() ? 'Cross-domain (localStorage + Authorization header)' : 'Same-domain (cookies)');
+      }
+      
       // Cache the user data
       queryClient.setQueryData(authKeys.me(), data.user);
       // Redirect to dashboard
@@ -57,6 +64,8 @@ export const useLogout = () => {
   return useMutation({
     mutationFn: () => api.logout(),
     onSuccess: () => {
+      // Remove stored token
+      removeAuthToken();
       // Clear all auth-related cache
       queryClient.invalidateQueries({ queryKey: authKeys.all });
       queryClient.removeQueries({ queryKey: authKeys.all });
@@ -65,6 +74,7 @@ export const useLogout = () => {
     },
     onError: () => {
       // Even if logout fails on server, clear client state and redirect
+      removeAuthToken();
       queryClient.invalidateQueries({ queryKey: authKeys.all });
       queryClient.removeQueries({ queryKey: authKeys.all });
       router.push('/login');
