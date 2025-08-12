@@ -7,7 +7,7 @@ import {
   User,
 } from "lucide-react"
 
-import { useLogout } from "@/hooks/api/useAuth"
+import { useLogout } from "@/hooks/api/use-auth"
 import {
   Avatar,
   AvatarFallback,

@@ -1,5 +1,5 @@
 import type { ApiUser, LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, MeResponse } from '@repo/shared';
-import { getAuthToken } from './authStrategy';
+import { getAuthToken } from './auth-strategy';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 

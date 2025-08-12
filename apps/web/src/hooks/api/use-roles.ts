@@ -8,7 +8,7 @@ import {
   UpdateRoleRequest,
   AssignPermissionsRequest 
 } from '@repo/shared';
-import { apiRequest } from '@/lib/apiRequest';
+import { apiRequest } from '@/lib/api-request';
 
 // API functions
 async function fetchRoles(page: number = 1, limit: number = 10, search?: string): Promise<ACLPaginatedResponse<Role>> {

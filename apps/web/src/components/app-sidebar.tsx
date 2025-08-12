@@ -12,7 +12,7 @@ import {
 } from "lucide-react"
 
 import { NavUser } from "@/components/nav-user"
-import { useAuth } from "@/contexts/AuthContext"
+import { useAuth } from "@/contexts/auth-context"
 import {
   Collapsible,
   CollapsibleContent,

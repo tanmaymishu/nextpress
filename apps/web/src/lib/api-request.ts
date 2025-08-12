@@ -1,5 +1,5 @@
 // Shared API request utility with flexible authentication
-import { getAuthToken } from './authStrategy';
+import { getAuthToken } from './auth-strategy';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 

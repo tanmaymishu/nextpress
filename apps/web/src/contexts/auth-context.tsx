@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { useMe } from '@/hooks/api/useAuth';
+import { useMe } from '@/hooks/api/use-auth';
 import { MeResponse } from '@repo/shared';
 
 interface AuthContextType {

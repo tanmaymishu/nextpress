@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { useUsers, useCreateUser, useUpdateUser, useDeleteUser } from '@/hooks/api/useUsers';
-import { useRoles } from '@/hooks/api/useRoles';
-import { useAuth } from '@/contexts/AuthContext';
+import { useUsers, useCreateUser, useUpdateUser, useDeleteUser } from '@/hooks/api/use-users';
+import { useRoles } from '@/hooks/api/use-roles';
+import { useAuth } from '@/contexts/auth-context';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';

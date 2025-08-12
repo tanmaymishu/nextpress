@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useAuth } from '@/contexts/AuthContext';
-import { useLogout } from '@/hooks/api/useAuth';
+import { useAuth } from '@/contexts/auth-context';
+import { useLogout } from '@/hooks/api/use-auth';
 
 export function HomeNavigation() {
   const { user, isAuthenticated } = useAuth();

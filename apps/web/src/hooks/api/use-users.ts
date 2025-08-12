@@ -8,7 +8,7 @@ import {
   UpdateUserRequest,
   AssignRolesRequest 
 } from '@repo/shared';
-import { apiRequest } from '@/lib/apiRequest';
+import { apiRequest } from '@/lib/api-request';
 
 // API functions
 async function fetchUsers(
