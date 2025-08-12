@@ -19,7 +19,6 @@ export function isCrossDomain(): boolean {
     return apiDomain !== frontendDomain;
   } catch (error) {
     console.error('Error parsing domain URLs:', error);
-    // Default to cross-domain for safety
     return true;
   }
 }

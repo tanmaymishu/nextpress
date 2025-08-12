@@ -69,7 +69,7 @@ app.use(cookieParser());
 // Configure session store - use memory store for tests, Redis for production
 const isProd = process.env.NODE_ENV === 'production';
 
-const sessionConfig: session.SessionOptions = {
+const sessionConfig: SessionOptions = {
   secret: process.env.JWT_SECRET as string,
   resave: false,
   saveUninitialized: false,
@@ -81,8 +81,8 @@ const sessionConfig: session.SessionOptions = {
     : undefined,
   cookie: {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    secure: process.env.FRONTEND_URL ? new URL(process.env.FRONTEND_URL).protocol === 'https:' : false,
+    sameSite: 'lax',
     maxAge: 1000 * 60 * 60 * 24, // 1 day
   },
 };

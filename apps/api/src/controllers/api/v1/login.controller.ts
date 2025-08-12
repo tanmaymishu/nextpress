@@ -22,12 +22,12 @@ export class LoginController {
         // Set cookie for same-domain usage
         res.cookie('jwt', user.token, {
           httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+          secure: req.secure,
+          sameSite: 'lax',
         });
 
         // Also return token in response for cross-domain localStorage usage
-        return res.status(200).json({ 
+        return res.status(200).json({
           user: {
             id: user.id,
             firstName: user.firstName,
@@ -49,10 +49,10 @@ export class LoginController {
     // Clear the JWT cookie
     res.clearCookie('jwt', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+      secure: req.secure,
+      sameSite: 'lax',
     });
-    
+
     // Destroy session if it exists
     if (req.session) {
       req.session.destroy((err) => {
@@ -61,7 +61,7 @@ export class LoginController {
         }
       });
     }
-    
+
     return res.status(200).json({ message: 'Logged out successfully' });
   }
 }
