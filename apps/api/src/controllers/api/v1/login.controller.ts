@@ -19,11 +19,14 @@ export class LoginController {
     return this.authService
       .login(req)
       .then((user) => {
-        // Set cookie for same-domain usage
+        // Determine if we're actually on HTTPS (not just NODE_ENV=production)
+        const isSecureContext = req.protocol === 'https' || req.get('x-forwarded-proto') === 'https';
+        
+        // Set cookie with proper settings based on actual protocol
         res.cookie('jwt', user.token, {
           httpOnly: true,
-          secure: req.secure,
-          sameSite: 'lax',
+          secure: isSecureContext,
+          sameSite: isSecureContext ? 'none' : 'lax',
         });
 
         // Also return token in response for cross-domain localStorage usage
@@ -46,11 +49,13 @@ export class LoginController {
 
   @Post('/logout')
   async logout(@Req() req: Request, @Res() res: Response) {
-    // Clear the JWT cookie
+    // Clear the JWT cookie with matching settings
+    const isSecureContext = req.protocol === 'https' || req.get('x-forwarded-proto') === 'https';
+    
     res.clearCookie('jwt', {
       httpOnly: true,
-      secure: req.secure,
-      sameSite: 'lax',
+      secure: isSecureContext,
+      sameSite: isSecureContext ? 'none' : 'lax',
     });
 
     // Destroy session if it exists

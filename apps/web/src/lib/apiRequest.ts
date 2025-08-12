@@ -34,7 +34,13 @@ export async function apiRequest<T>(
       const error = await response.json();
       throw new Error(error.error || error.message || `HTTP error! status: ${response.status}`);
     } catch (jsonError) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      // If JSON parsing fails, try to get text response
+      try {
+        const text = await response.text();
+        throw new Error(text || `HTTP error! status: ${response.status}`);
+      } catch {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
     }
   }
 

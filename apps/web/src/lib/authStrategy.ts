@@ -1,5 +1,6 @@
 // Authentication strategy detection based on domain configuration
 
+
 /**
  * Determines if we're in cross-domain mode based on API and frontend URLs
  * Returns true if different domains, false if same domain/localhost
@@ -7,11 +8,8 @@
 export function isCrossDomain(): boolean {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-  console.log('🔍 Domain Detection Debug:');
-  console.log('  API_URL:', apiUrl);
-
   if (!apiUrl) {
-    console.log('  Result: Same-domain (no API URL configured)');
+    // No API URL configured, assume localhost same-domain
     return false;
   }
 
@@ -19,16 +17,10 @@ export function isCrossDomain(): boolean {
     const apiDomain = new URL(apiUrl).hostname;
     const frontendDomain = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
     
-    console.log('  API Domain:', apiDomain);
-    console.log('  Frontend Domain:', frontendDomain);
-    
-    const isCross = apiDomain !== frontendDomain;
-    console.log('  Result:', isCross ? 'Cross-domain' : 'Same-domain');
-    
-    return isCross;
+    // If domains are different, we're cross-domain
+    return apiDomain !== frontendDomain;
   } catch (error) {
-    console.error('  Error parsing domain URLs:', error);
-    console.log('  Result: Cross-domain (fallback due to error)');
+    // Default to cross-domain for safety
     return true;
   }
 }

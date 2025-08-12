@@ -81,8 +81,9 @@ const sessionConfig: SessionOptions = {
     : undefined,
   cookie: {
     httpOnly: true,
-    secure: process.env.FRONTEND_URL ? new URL(process.env.FRONTEND_URL).protocol === 'https:' : false,
-    sameSite: 'lax',
+    // Use secure cookies only when actually on HTTPS
+    secure: (process.env.FRONTEND_URL && process.env.FRONTEND_URL.startsWith('https')) || false,
+    sameSite: ((process.env.FRONTEND_URL && process.env.FRONTEND_URL.startsWith('https')) ? 'none' : 'lax') as 'none' | 'lax',
     maxAge: 1000 * 60 * 60 * 24, // 1 day
   },
 };
