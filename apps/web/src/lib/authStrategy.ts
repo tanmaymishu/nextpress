@@ -5,24 +5,23 @@
  * Returns true if different domains, false if same domain/localhost
  */
 export function isCrossDomain(): boolean {
-  return false;
-  // const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-  //
-  // if (!apiUrl) {
-  //   // No API URL configured, assume localhost same-domain
-  //   return false;
-  // }
-  //
-  // try {
-  //   const apiDomain = new URL(apiUrl).hostname;
-  //   const frontendDomain = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
-  //   // If domains are different, we're cross-domain
-  //   return apiDomain !== frontendDomain;
-  // } catch (error) {
-  //   console.error('Error parsing domain URLs:', error);
-  //   // Default to cross-domain for safety
-  //   return true;
-  // }
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  if (!apiUrl) {
+    // No API URL configured, assume localhost same-domain
+    return false;
+  }
+
+  try {
+    const apiDomain = new URL(apiUrl).hostname;
+    const frontendDomain = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
+    // If domains are different, we're cross-domain
+    return apiDomain !== frontendDomain;
+  } catch (error) {
+    console.error('Error parsing domain URLs:', error);
+    // Default to cross-domain for safety
+    return true;
+  }
 }
 
 /**

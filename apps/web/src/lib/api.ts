@@ -4,7 +4,7 @@ import { getAuthToken } from './authStrategy';
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
 export class ApiClient {
-  private baseURL: string;
+  private readonly baseURL: string;
 
   constructor() {
     this.baseURL = API_BASE_URL;
