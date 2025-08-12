@@ -178,8 +178,8 @@ export class UsersV1Controller {
           name: role.name,
           label: role.label
         })),
-        createdAt: createdUser!.createdAt.toISOString(),
-        updatedAt: createdUser!.updatedAt.toISOString()
+        createdAt: createdUser!.createdAt,
+        updatedAt: createdUser!.updatedAt
       },
       message: 'User created successfully'
     };
@@ -242,7 +242,7 @@ export class UsersV1Controller {
           name: role.name,
           label: role.label
         })),
-        updatedAt: updatedUser!.updatedAt.toISOString()
+        updatedAt: updatedUser!.updatedAt
       },
       message: 'User updated successfully'
     };
