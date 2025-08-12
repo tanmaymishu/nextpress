@@ -26,7 +26,7 @@ export class LoginController {
           sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
         });
 
-        // Also return token in response for cross-domain localStorage usage
+        // Return user and token at root level
         return res.status(200).json({ 
           user: {
             id: user.id,
@@ -35,7 +35,7 @@ export class LoginController {
             email: user.email,
             isAdmin: user.isAdmin
           },
-          token: user.token // Include token for localStorage storage
+          token: user.token // Token at root level
         });
       })
       .catch((err) => {

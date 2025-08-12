@@ -141,7 +141,7 @@ describe('Authentication API', () => {
         .expect(200);
 
       expect(response.body).toHaveProperty('user');
-      expect(response.body.user).toHaveProperty('token');
+      expect(response.body).toHaveProperty('token');
       expect(response.body.user.email).toBe(loginData.email);
       expect(response.body.user).not.toHaveProperty('password');
 
