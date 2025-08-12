@@ -74,8 +74,8 @@ const sessionConfig: SessionOptions = {
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production' && process.env.HTTPS === 'true',
-    sameSite: process.env.NODE_ENV === 'production' && process.env.HTTPS === 'true' ? 'none' as const : 'lax' as const,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'none', // Change it to 'strict' or 'lax' to strengthen security
     maxAge: 1000 * 60 * 60 * 24
   }
 };
