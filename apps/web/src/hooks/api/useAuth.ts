@@ -29,9 +29,20 @@ export const useLogin = () => {
   return useMutation({
     mutationFn: (credentials: LoginRequest) => api.login(credentials),
     onSuccess: (data) => {
+      // Debug domain detection in production
+      const crossDomain = isCrossDomain();
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+      const currentHost = typeof window !== 'undefined' ? window.location.hostname : 'unknown';
+      
       // Store token if we received one (for cross-domain auth)
       if (data.token) {
         setAuthToken(data.token);
+        
+        // Add temporary alert for production debugging
+        if (typeof window !== 'undefined' && window.location.hostname.includes('vercel.app')) {
+          const tokenInStorage = localStorage.getItem('auth_token');
+          alert(`Debug: Cross-domain=${crossDomain}, API=${apiUrl}, Host=${currentHost}, TokenStored=${!!tokenInStorage}, Browser=${navigator.userAgent.includes('Safari') && !navigator.userAgent.includes('Chrome') ? 'Safari' : 'Other'}`);
+        }
       }
       
       // Cache the user data
