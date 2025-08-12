@@ -8,6 +8,7 @@ import {
   UpdateUserRequest,
   AssignRolesRequest 
 } from '@repo/shared';
+import { normalizeUser } from '@/lib/dataUtils';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
@@ -33,11 +34,20 @@ async function fetchUsers(
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to fetch users');
+    try {
+      const error = await response.json();
+      throw new Error(error.error || error.message || `Failed to fetch users (${response.status})`);
+    } catch (jsonError) {
+      throw new Error(`Failed to fetch users: ${response.statusText} (${response.status})`);
+    }
   }
 
-  return response.json();
+  const data = await response.json();
+  // Normalize user data for consistent types
+  return {
+    ...data,
+    data: data.data?.map(normalizeUser) || []
+  };
 }
 
 async function fetchUser(id: number): Promise<ACLApiResponse<User>> {

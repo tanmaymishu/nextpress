@@ -1,4 +1,5 @@
 import type { ApiUser, LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, MeResponse } from '@repo/shared';
+import { normalizeUser } from './dataUtils';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
@@ -11,6 +12,7 @@ export class ApiClient {
 
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const url = `${this.baseURL}${endpoint}`;
+    console.log('Making API request to:', url);
     
     const config: RequestInit = {
       headers: {
@@ -21,13 +23,30 @@ export class ApiClient {
       ...options,
     };
 
-    const response = await fetch(url, config);
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+    try {
+      const response = await fetch(url, config);
+      console.log('API response status:', response.status, response.statusText);
+      
+      if (!response.ok) {
+        let errorMessage = `HTTP error! status: ${response.status}`;
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorData.message || errorMessage;
+        } catch {
+          // If JSON parsing fails, use generic error message
+        }
+        throw new Error(errorMessage);
+      }
 
-    return response.json();
+      return response.json();
+    } catch (error) {
+      console.error('API request failed:', error);
+      // Check if it's a network error (fetch failed)
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        throw new Error('Load failed - Cannot connect to server. Please check your connection.');
+      }
+      throw error;
+    }
   }
 
   async get<T = any>(endpoint: string): Promise<T> {
@@ -66,7 +85,8 @@ export class ApiClient {
   }
 
   async me(): Promise<MeResponse> {
-    return this.get<MeResponse>('/api/v1/me');
+    const response = await this.get<MeResponse>('/api/v1/me');
+    return normalizeUser(response);
   }
 
   async logout(): Promise<{ message: string }> {
