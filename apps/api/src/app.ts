@@ -55,6 +55,11 @@ if (process.env.NODE_ENV !== 'test') {
 // Create an express app.
 const app = express();
 
+// Trust proxy for production deployment (Render, Vercel, etc.)
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1); // Trust first proxy
+}
+
 // Security headers with Helmet
 app.use(helmet());
 
