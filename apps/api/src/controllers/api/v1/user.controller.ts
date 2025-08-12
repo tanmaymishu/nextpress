@@ -32,7 +32,6 @@ export class UserController {
       firstName: userWithPermissions.firstName,
       lastName: userWithPermissions.lastName,
       email: userWithPermissions.email,
-      isAdmin: userWithPermissions.isAdmin,
       directPermissions: userWithPermissions.permissions?.map(p => p.name) || [],
       roles: userWithPermissions.roles?.map(role => ({
         id: role.id,
@@ -41,8 +40,8 @@ export class UserController {
         permissions: role.permissions?.map(p => p.name) || []
       })) || [],
       allPermissions: await userWithPermissions.getPermissionNames(),
-      createdAt: userWithPermissions.createdAt.toISOString(),
-      updatedAt: userWithPermissions.updatedAt.toISOString()
+      createdAt: userWithPermissions.createdAt,
+      updatedAt: userWithPermissions.updatedAt
     });
   }
 }
