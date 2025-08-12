@@ -29,10 +29,21 @@ export const useLogin = () => {
   return useMutation({
     mutationFn: (credentials: LoginRequest) => api.login(credentials),
     onSuccess: (data) => {
+      console.log('🚀 Login Success Handler:');
+      console.log('  Response data:', data);
+      console.log('  Token received:', !!data.token);
+      
       // Store token if we received one (for cross-domain auth)
       if (data.token) {
+        console.log('  Storing token...');
         setAuthToken(data.token);
-        console.log('Authentication strategy:', isCrossDomain() ? 'Cross-domain (localStorage + Authorization header)' : 'Same-domain (cookies)');
+        console.log('  Authentication strategy:', isCrossDomain() ? 'Cross-domain (localStorage + Authorization header)' : 'Same-domain (cookies)');
+        
+        // Verify token was stored
+        const storedToken = localStorage.getItem('auth_token');
+        console.log('  Token verification - stored:', !!storedToken);
+      } else {
+        console.log('  No token in response to store');
       }
       
       // Cache the user data

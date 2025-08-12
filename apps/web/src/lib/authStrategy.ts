@@ -7,18 +7,28 @@
 export function isCrossDomain(): boolean {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
+  console.log('🔍 Domain Detection Debug:');
+  console.log('  API_URL:', apiUrl);
+
   if (!apiUrl) {
-    // No API URL configured, assume localhost same-domain
+    console.log('  Result: Same-domain (no API URL configured)');
     return false;
   }
 
   try {
     const apiDomain = new URL(apiUrl).hostname;
     const frontendDomain = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
-    // If domains are different, we're cross-domain
-    return apiDomain !== frontendDomain;
+    
+    console.log('  API Domain:', apiDomain);
+    console.log('  Frontend Domain:', frontendDomain);
+    
+    const isCross = apiDomain !== frontendDomain;
+    console.log('  Result:', isCross ? 'Cross-domain' : 'Same-domain');
+    
+    return isCross;
   } catch (error) {
-    console.error('Error parsing domain URLs:', error);
+    console.error('  Error parsing domain URLs:', error);
+    console.log('  Result: Cross-domain (fallback due to error)');
     return true;
   }
 }
