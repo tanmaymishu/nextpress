@@ -32,9 +32,8 @@ export const useLogin = () => {
       // Store token if we received one (for cross-domain auth)
       if (data.token) {
         setAuthToken(data.token);
-        console.log('Authentication strategy:', isCrossDomain() ? 'Cross-domain (localStorage + Authorization header)' : 'Same-domain (cookies)');
       }
-      
+
       // Cache the user data
       queryClient.setQueryData(authKeys.me(), data.user);
       // Redirect to dashboard
