@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { ApiClient } from '@/lib/api';
 import { LoginRequest, RegisterRequest, MeResponse } from '@repo/shared';
-import { setAuthToken, removeAuthToken, isCrossDomain } from '@/lib/authStrategy';
+import { setAuthToken, removeAuthToken } from '@/lib/authStrategy';
 
 const api = new ApiClient();
 

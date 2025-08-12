@@ -1,5 +1,5 @@
 import type { ApiUser, LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, MeResponse } from '@repo/shared';
-import { getAuthToken, isCrossDomain } from './authStrategy';
+import { getAuthToken } from './authStrategy';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
@@ -12,7 +12,7 @@ export class ApiClient {
 
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const url = `${this.baseURL}${endpoint}`;
-    
+
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       ...options.headers as Record<string, string>,
@@ -23,7 +23,7 @@ export class ApiClient {
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
     }
-    
+
     const config: RequestInit = {
       headers,
       credentials: 'include', // Always include cookies as fallback
@@ -31,7 +31,7 @@ export class ApiClient {
     };
 
     const response = await fetch(url, config);
-    
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
