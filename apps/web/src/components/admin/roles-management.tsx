@@ -15,14 +15,14 @@ import {
   TableRow
 } from '@/components/ui/table';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogDescription,
+  ResponsiveDialogFooter,
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+  ResponsiveDialogTrigger,
+} from '@/components/ui/responsive-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Role, Permission } from '@repo/shared';
@@ -180,22 +180,23 @@ export default function RolesManagement() {
             className="w-64"
           />
         </div>
-        <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-          <DialogTrigger asChild>
+        <ResponsiveDialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+          <ResponsiveDialogTrigger asChild>
             <Button onClick={openCreateDialog}>
               <Plus className="h-4 w-4 mr-2" />
               Add Role
             </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
-            <form onSubmit={handleCreateRole}>
-              <DialogHeader>
-                <DialogTitle>Create New Role</DialogTitle>
-                <DialogDescription>
+          </ResponsiveDialogTrigger>
+          <ResponsiveDialogContent className="sm:max-w-2xl">
+            <form onSubmit={handleCreateRole} className="flex flex-col h-full">
+              <ResponsiveDialogHeader className="flex-shrink-0">
+                <ResponsiveDialogTitle>Create New Role</ResponsiveDialogTitle>
+                <ResponsiveDialogDescription>
                   Add a new role to the system and assign permissions.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
+                </ResponsiveDialogDescription>
+              </ResponsiveDialogHeader>
+              <div className="flex-1 overflow-y-auto px-4">
+                <div className="grid gap-4 py-4">
                 <div className="space-y-2">
                   <Label htmlFor="name">Role Name</Label>
                   <Input
@@ -276,18 +277,19 @@ export default function RolesManagement() {
                     </div>
                   )}
                 </div>
+                </div>
               </div>
-              <DialogFooter>
+              <ResponsiveDialogFooter className="flex-shrink-0">
                 <Button type="button" variant="outline" onClick={() => setIsCreateOpen(false)}>
                   Cancel
                 </Button>
                 <Button type="submit" disabled={createRoleMutation.isPending}>
                   {createRoleMutation.isPending ? 'Creating...' : 'Create Role'}
                 </Button>
-              </DialogFooter>
+              </ResponsiveDialogFooter>
             </form>
-          </DialogContent>
-        </Dialog>
+          </ResponsiveDialogContent>
+        </ResponsiveDialog>
       </div>
 
       {/* Roles table */}
@@ -429,16 +431,17 @@ export default function RolesManagement() {
       )}
 
       {/* Edit Role Dialog */}
-      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
-          <form onSubmit={handleUpdateRole}>
-            <DialogHeader>
-              <DialogTitle>Edit Role</DialogTitle>
-              <DialogDescription>
+      <ResponsiveDialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+        <ResponsiveDialogContent className="sm:max-w-2xl">
+          <form onSubmit={handleUpdateRole} className="flex flex-col h-full">
+            <ResponsiveDialogHeader className="flex-shrink-0">
+              <ResponsiveDialogTitle>Edit Role</ResponsiveDialogTitle>
+              <ResponsiveDialogDescription>
                 Update role information and permissions.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
+              </ResponsiveDialogDescription>
+            </ResponsiveDialogHeader>
+            <div className="flex-1 overflow-y-auto px-4">
+              <div className="grid gap-4 py-4">
               <div className="space-y-2">
                 <Label htmlFor="editName">Role Name</Label>
                 <Input
@@ -518,18 +521,19 @@ export default function RolesManagement() {
                   </div>
                 )}
               </div>
+              </div>
             </div>
-            <DialogFooter>
+            <ResponsiveDialogFooter className="flex-shrink-0">
               <Button type="button" variant="outline" onClick={() => setIsEditOpen(false)}>
                 Cancel
               </Button>
               <Button type="submit" disabled={updateRoleMutation.isPending}>
                 {updateRoleMutation.isPending ? 'Updating...' : 'Update Role'}
               </Button>
-            </DialogFooter>
+            </ResponsiveDialogFooter>
           </form>
-        </DialogContent>
-      </Dialog>
+        </ResponsiveDialogContent>
+      </ResponsiveDialog>
     </div>
   );
 }

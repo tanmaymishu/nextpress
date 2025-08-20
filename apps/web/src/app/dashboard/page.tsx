@@ -7,7 +7,7 @@ export default function DashboardPage() {
 
   return (
     <div className="flex items-center justify-center min-h-[60vh]">
-      <div className="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center max-w-md w-full">
+      <div className="border-2 border-dashed border-gray-300 rounded p-12 text-center max-w-md w-full">
         <h2 className="text-2xl font-semibold text-gray-900 mb-4">
           Welcome, {user?.firstName} {user?.lastName}
         </h2>

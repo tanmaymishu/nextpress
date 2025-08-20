@@ -7,23 +7,23 @@ import { useAuth } from '@/contexts/auth-context';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
 } from '@/components/ui/table';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogDescription,
+  ResponsiveDialogFooter,
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+  ResponsiveDialogTrigger,
+} from '@/components/ui/responsive-dialog';
 import {
   Select,
   SelectContent,
@@ -183,21 +183,21 @@ export default function UsersManagement() {
             className="w-64"
           />
         </div>
-        <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-          <DialogTrigger asChild>
+        <ResponsiveDialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+          <ResponsiveDialogTrigger asChild>
             <Button onClick={openCreateDialog}>
               <Plus className="h-4 w-4 mr-2" />
               Add User
             </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-md">
+          </ResponsiveDialogTrigger>
+          <ResponsiveDialogContent className="sm:max-w-md">
             <form onSubmit={handleCreateUser}>
-              <DialogHeader>
-                <DialogTitle>Create New User</DialogTitle>
-                <DialogDescription>
+              <ResponsiveDialogHeader>
+                <ResponsiveDialogTitle>Create New User</ResponsiveDialogTitle>
+                <ResponsiveDialogDescription>
                   Add a new user to the system with role assignments.
-                </DialogDescription>
-              </DialogHeader>
+                </ResponsiveDialogDescription>
+              </ResponsiveDialogHeader>
               <div className="grid gap-4 py-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
@@ -258,21 +258,21 @@ export default function UsersManagement() {
                   </Select>
                 </div>
               </div>
-              <DialogFooter>
+              <ResponsiveDialogFooter>
                 <Button type="button" variant="outline" onClick={() => setIsCreateOpen(false)}>
                   Cancel
                 </Button>
                 <Button type="submit" disabled={createUserMutation.isPending}>
                   {createUserMutation.isPending ? 'Creating...' : 'Create User'}
                 </Button>
-              </DialogFooter>
+              </ResponsiveDialogFooter>
             </form>
-          </DialogContent>
-        </Dialog>
+          </ResponsiveDialogContent>
+        </ResponsiveDialog>
       </div>
 
       {/* Users table */}
-      <div className="border rounded-lg">
+      <div className="border rounded">
         <Table>
           <TableHeader>
             <TableRow>
@@ -324,7 +324,7 @@ export default function UsersManagement() {
                         <Pencil className="h-4 w-4" />
                       </Button>
                     )}
-                    
+
                     {/* Show delete button only when:
                         - Current user is admin
                         - AND target user is not admin (admin can't delete other admins)
@@ -409,15 +409,15 @@ export default function UsersManagement() {
       )}
 
       {/* Edit User Dialog */}
-      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="sm:max-w-md">
+      <ResponsiveDialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+        <ResponsiveDialogContent className="sm:max-w-md">
           <form onSubmit={handleUpdateUser}>
-            <DialogHeader>
-              <DialogTitle>Edit User</DialogTitle>
-              <DialogDescription>
+            <ResponsiveDialogHeader>
+              <ResponsiveDialogTitle>Edit User</ResponsiveDialogTitle>
+              <ResponsiveDialogDescription>
                 Update user information and role assignments.
-              </DialogDescription>
-            </DialogHeader>
+              </ResponsiveDialogDescription>
+            </ResponsiveDialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -478,17 +478,17 @@ export default function UsersManagement() {
                 </Select>
               </div>
             </div>
-            <DialogFooter>
+            <ResponsiveDialogFooter>
               <Button type="button" variant="outline" onClick={() => setIsEditOpen(false)}>
                 Cancel
               </Button>
               <Button type="submit" disabled={updateUserMutation.isPending}>
                 {updateUserMutation.isPending ? 'Updating...' : 'Update User'}
               </Button>
-            </DialogFooter>
+            </ResponsiveDialogFooter>
           </form>
-        </DialogContent>
-      </Dialog>
+        </ResponsiveDialogContent>
+      </ResponsiveDialog>
     </div>
   );
 }

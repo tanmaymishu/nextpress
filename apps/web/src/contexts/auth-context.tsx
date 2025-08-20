@@ -34,13 +34,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const guestRoutes = ['/login', '/register'];
   
   // Protected routes that require authentication
-  const protectedRoutes = ['/dashboard'];
+  const protectedRoutes = ['/dashboard', '/admin'];
 
   useEffect(() => {
     if (isLoading) return;
 
     const isGuestRoute = guestRoutes.includes(pathname);
-    const isProtectedRoute = protectedRoutes.includes(pathname);
+    const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
 
     if (isAuthenticated && isGuestRoute) {
       // User is authenticated but on a guest route, redirect to dashboard
